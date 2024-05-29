@@ -1,4 +1,4 @@
-﻿@model Car
+﻿@model ExpressVoitures.Models.Car
 
 @{
     ViewData["Title"] = "Details";
@@ -15,18 +15,6 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Year)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Brand)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Brand)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Model)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Model)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Trim)
@@ -47,10 +35,16 @@
             @Html.DisplayFor(model => model.PurchasePrice)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AvailabilityDate)
+            @Html.DisplayNameFor(model => model.SaleDate)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AvailabilityDate)
+            @Html.DisplayFor(model => model.SaleDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SalePrice)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SalePrice)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.IsAvailable)
@@ -59,20 +53,20 @@
             @Html.DisplayFor(model => model.IsAvailable)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PhotoUrl)
+            @Html.DisplayNameFor(model => model.Make)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PhotoUrl)
+            @Html.DisplayFor(model => model.Make.Name)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
+            @Html.DisplayNameFor(model => model.Model)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
+            @Html.DisplayFor(model => model.Model.Name)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.VIN">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model?.CarId">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

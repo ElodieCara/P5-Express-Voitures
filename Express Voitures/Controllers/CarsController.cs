@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using ExpressVoitures.Data;
+using ExpressVoitures.Models;
 
 namespace Express_Voitures.Controllers
 {
@@ -20,11 +22,12 @@ namespace Express_Voitures.Controllers
         // GET: Cars
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Cars.ToListAsync());
+            var applicationDbContext = _context.Cars.Include(c => c.Make).Include(c => c.Model);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Cars/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -32,7 +35,9 @@ namespace Express_Voitures.Controllers
             }
 
             var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.VIN == id);
+                .Include(c => c.Make)
+                .Include(c => c.Model)
+                .FirstOrDefaultAsync(m => m.CarId == id);
             if (car == null)
             {
                 return NotFound();
@@ -44,6 +49,8 @@ namespace Express_Voitures.Controllers
         // GET: Cars/Create
         public IActionResult Create()
         {
+            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name");
+            ViewData["ModelId"] = new SelectList(_context.Models, "ModelId", "Name");
             return View();
         }
 
@@ -52,7 +59,7 @@ namespace Express_Voitures.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("VIN,Year,Brand,Model,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,IsAvailable,PhotoUrl,Description")] Car car)
+        public async Task<IActionResult> Create([Bind("CarId,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,SaleDate,SalePrice,IsAvailable")] Car car)
         {
             if (ModelState.IsValid)
             {
@@ -60,11 +67,13 @@ namespace Express_Voitures.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name", car.MakeId);
+            ViewData["ModelId"] = new SelectList(_context.Models, "ModelId", "Name", car.ModelId);
             return View(car);
         }
 
         // GET: Cars/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -76,6 +85,8 @@ namespace Express_Voitures.Controllers
             {
                 return NotFound();
             }
+            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name", car.MakeId);
+            ViewData["ModelId"] = new SelectList(_context.Models, "ModelId", "Name", car.ModelId);
             return View(car);
         }
 
@@ -84,9 +95,9 @@ namespace Express_Voitures.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("VIN,Year,Brand,Model,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,IsAvailable,PhotoUrl,Description")] Car car)
+        public async Task<IActionResult> Edit(int id, [Bind("CarId,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,SaleDate,SalePrice,IsAvailable")] Car car)
         {
-            if (id != car.VIN)
+            if (id != car.CarId)
             {
                 return NotFound();
             }
@@ -100,7 +111,7 @@ namespace Express_Voitures.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CarExists(car.VIN))
+                    if (!CarExists(car.CarId))
                     {
                         return NotFound();
                     }
@@ -111,11 +122,13 @@ namespace Express_Voitures.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name", car.MakeId);
+            ViewData["ModelId"] = new SelectList(_context.Models, "ModelId", "Name", car.ModelId);
             return View(car);
         }
 
         // GET: Cars/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -123,7 +136,9 @@ namespace Express_Voitures.Controllers
             }
 
             var car = await _context.Cars
-                .FirstOrDefaultAsync(m => m.VIN == id);
+                .Include(c => c.Make)
+                .Include(c => c.Model)
+                .FirstOrDefaultAsync(m => m.CarId == id);
             if (car == null)
             {
                 return NotFound();
@@ -135,7 +150,7 @@ namespace Express_Voitures.Controllers
         // POST: Cars/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var car = await _context.Cars.FindAsync(id);
             if (car != null)
@@ -147,9 +162,9 @@ namespace Express_Voitures.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CarExists(string id)
+        private bool CarExists(int id)
         {
-            return _context.Cars.Any(e => e.VIN == id);
+            return _context.Cars.Any(e => e.CarId == id);
         }
     }
 }

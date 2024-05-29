@@ -10,23 +10,22 @@ using ExpressVoitures.Models;
 
 namespace Express_Voitures.Controllers
 {
-    public class RepairsController : Controller
+    public class MakesController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public RepairsController(ApplicationDbContext context)
+        public MakesController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Repairs
+        // GET: Makes
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Repairs.Include(r => r.Car);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.Makes.ToListAsync());
         }
 
-        // GET: Repairs/Details/5
+        // GET: Makes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,42 +33,39 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var repair = await _context.Repairs
-                .Include(r => r.Car)
-                .FirstOrDefaultAsync(m => m.RepairId == id);
-            if (repair == null)
+            var make = await _context.Makes
+                .FirstOrDefaultAsync(m => m.MakeId == id);
+            if (make == null)
             {
                 return NotFound();
             }
 
-            return View(repair);
+            return View(make);
         }
 
-        // GET: Repairs/Create
+        // GET: Makes/Create
         public IActionResult Create()
         {
-            ViewData["CarId"] = new SelectList(_context.Cars, "CarId", "CarId");
             return View();
         }
 
-        // POST: Repairs/Create
+        // POST: Makes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RepairId,CarId,Description,Cost")] Repair repair)
+        public async Task<IActionResult> Create([Bind("MakeId,Name")] Make make)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(repair);
+                _context.Add(make);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CarId"] = new SelectList(_context.Cars, "CarId", "CarId", repair.CarId);
-            return View(repair);
+            return View(make);
         }
 
-        // GET: Repairs/Edit/5
+        // GET: Makes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -77,23 +73,22 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var repair = await _context.Repairs.FindAsync(id);
-            if (repair == null)
+            var make = await _context.Makes.FindAsync(id);
+            if (make == null)
             {
                 return NotFound();
             }
-            ViewData["CarId"] = new SelectList(_context.Cars, "CarId", "CarId", repair.CarId);
-            return View(repair);
+            return View(make);
         }
 
-        // POST: Repairs/Edit/5
+        // POST: Makes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RepairId,CarId,Description,Cost")] Repair repair)
+        public async Task<IActionResult> Edit(int id, [Bind("MakeId,Name")] Make make)
         {
-            if (id != repair.RepairId)
+            if (id != make.MakeId)
             {
                 return NotFound();
             }
@@ -102,12 +97,12 @@ namespace Express_Voitures.Controllers
             {
                 try
                 {
-                    _context.Update(repair);
+                    _context.Update(make);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RepairExists(repair.RepairId))
+                    if (!MakeExists(make.MakeId))
                     {
                         return NotFound();
                     }
@@ -118,11 +113,10 @@ namespace Express_Voitures.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CarId"] = new SelectList(_context.Cars, "CarId", "CarId", repair.CarId);
-            return View(repair);
+            return View(make);
         }
 
-        // GET: Repairs/Delete/5
+        // GET: Makes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -130,35 +124,34 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var repair = await _context.Repairs
-                .Include(r => r.Car)
-                .FirstOrDefaultAsync(m => m.RepairId == id);
-            if (repair == null)
+            var make = await _context.Makes
+                .FirstOrDefaultAsync(m => m.MakeId == id);
+            if (make == null)
             {
                 return NotFound();
             }
 
-            return View(repair);
+            return View(make);
         }
 
-        // POST: Repairs/Delete/5
+        // POST: Makes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var repair = await _context.Repairs.FindAsync(id);
-            if (repair != null)
+            var make = await _context.Makes.FindAsync(id);
+            if (make != null)
             {
-                _context.Repairs.Remove(repair);
+                _context.Makes.Remove(make);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool RepairExists(int id)
+        private bool MakeExists(int id)
         {
-            return _context.Repairs.Any(e => e.RepairId == id);
+            return _context.Makes.Any(e => e.MakeId == id);
         }
     }
 }

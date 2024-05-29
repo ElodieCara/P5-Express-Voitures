@@ -1,50 +1,49 @@
-﻿using ExpressVoitures.Data;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using ExpressVoitures.Models;
 
-public class ApplicationDbContext : IdentityDbContext<User>
+namespace ExpressVoitures.Data
 {
-    public DbSet<Car> Cars { get; set; }
-    public DbSet<Repair> Repairs { get; set; }
-    public DbSet<Sale> Sales { get; set; }
-
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
-    }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
+        public DbSet<Make> Makes { get; set; }
+        public DbSet<Model> Models { get; set; }
+        public DbSet<Car> Cars { get; set; }
+        public DbSet<Repair> Repairs { get; set; }
 
-        // Configuration des clés primaires et des relations
-        modelBuilder.Entity<Car>()
-            .HasKey(v => v.VIN);
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Repair>()
-            .HasKey(r => r.RepairId);
+            modelBuilder.Entity<Make>()
+                .HasMany(m => m.Models)
+                .WithOne(m => m.Make)
+                .HasForeignKey(m => m.MakeId);
 
-        modelBuilder.Entity<Repair>()
-            .HasOne(r => r.Car)
-            .WithMany(v => v.Repairs)
-            .HasForeignKey(r => r.VIN);
+            modelBuilder.Entity<Model>()
+                .HasMany(m => m.Cars)
+                .WithOne(c => c.Model)
+                .HasForeignKey(c => c.ModelId);
 
-        modelBuilder.Entity<Repair>()
-            .HasOne(r => r.User)
-            .WithMany(u => u.Repairs)
-            .HasForeignKey(r => r.UserId);
+            modelBuilder.Entity<Car>()
+                .HasMany(c => c.Repairs)
+                .WithOne(r => r.Car)
+                .HasForeignKey(r => r.CarId);
 
-        modelBuilder.Entity<Sale>()
-            .HasKey(s => s.SaleId);
+            // Corrigez les chemins de suppression en cascade
+            modelBuilder.Entity<Car>()
+                .HasOne(c => c.Make)
+                .WithMany(m => m.Cars)
+                .HasForeignKey(c => c.MakeId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<Sale>()
-            .HasOne(s => s.Car)
-            .WithMany(v => v.Sales)
-            .HasForeignKey(s => s.VIN);
-
-        modelBuilder.Entity<Sale>()
-            .HasOne(s => s.User)
-            .WithMany(u => u.Sales)
-            .HasForeignKey(s => s.UserId);
+            modelBuilder.Entity<Car>()
+                .HasOne(c => c.Model)
+                .WithMany(m => m.Cars)
+                .HasForeignKey(c => c.ModelId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }

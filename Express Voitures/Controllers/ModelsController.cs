@@ -5,26 +5,28 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using ExpressVoitures.Data;
+using ExpressVoitures.Models;
 
 namespace Express_Voitures.Controllers
 {
-    public class SalesController : Controller
+    public class ModelsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public SalesController(ApplicationDbContext context)
+        public ModelsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Sales
+        // GET: Models
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Sales.Include(s => s.Car).Include(s => s.User);
+            var applicationDbContext = _context.Models.Include(m => m.Make);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Sales/Details/5
+        // GET: Models/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,45 +34,42 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var sale = await _context.Sales
-                .Include(s => s.Car)
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(m => m.SaleId == id);
-            if (sale == null)
+            var model = await _context.Models
+                .Include(m => m.Make)
+                .FirstOrDefaultAsync(m => m.ModelId == id);
+            if (model == null)
             {
                 return NotFound();
             }
 
-            return View(sale);
+            return View(model);
         }
 
-        // GET: Sales/Create
+        // GET: Models/Create
         public IActionResult Create()
         {
-            ViewData["VIN"] = new SelectList(_context.Cars, "VIN", "VIN");
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name");
             return View();
         }
 
-        // POST: Sales/Create
+        // POST: Models/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SaleId,VIN,SalePrice,SaleDate,UserId")] Sale sale)
+        public async Task<IActionResult> Create([Bind("ModelId,MakeId,Name")] Model model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(sale);
+                _context.Add(model);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["VIN"] = new SelectList(_context.Cars, "VIN", "VIN", sale.VIN);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", sale.UserId);
-            return View(sale);
+            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name", model.MakeId);
+            return View(model);
         }
 
-        // GET: Sales/Edit/5
+        // GET: Models/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,24 +77,23 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var sale = await _context.Sales.FindAsync(id);
-            if (sale == null)
+            var model = await _context.Models.FindAsync(id);
+            if (model == null)
             {
                 return NotFound();
             }
-            ViewData["VIN"] = new SelectList(_context.Cars, "VIN", "VIN", sale.VIN);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", sale.UserId);
-            return View(sale);
+            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name", model.MakeId);
+            return View(model);
         }
 
-        // POST: Sales/Edit/5
+        // POST: Models/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SaleId,VIN,SalePrice,SaleDate,UserId")] Sale sale)
+        public async Task<IActionResult> Edit(int id, [Bind("ModelId,MakeId,Name")] Model model)
         {
-            if (id != sale.SaleId)
+            if (id != model.ModelId)
             {
                 return NotFound();
             }
@@ -104,12 +102,12 @@ namespace Express_Voitures.Controllers
             {
                 try
                 {
-                    _context.Update(sale);
+                    _context.Update(model);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SaleExists(sale.SaleId))
+                    if (!ModelExists(model.ModelId))
                     {
                         return NotFound();
                     }
@@ -120,12 +118,11 @@ namespace Express_Voitures.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["VIN"] = new SelectList(_context.Cars, "VIN", "VIN", sale.VIN);
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", sale.UserId);
-            return View(sale);
+            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name", model.MakeId);
+            return View(model);
         }
 
-        // GET: Sales/Delete/5
+        // GET: Models/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,36 +130,35 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var sale = await _context.Sales
-                .Include(s => s.Car)
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(m => m.SaleId == id);
-            if (sale == null)
+            var model = await _context.Models
+                .Include(m => m.Make)
+                .FirstOrDefaultAsync(m => m.ModelId == id);
+            if (model == null)
             {
                 return NotFound();
             }
 
-            return View(sale);
+            return View(model);
         }
 
-        // POST: Sales/Delete/5
+        // POST: Models/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var sale = await _context.Sales.FindAsync(id);
-            if (sale != null)
+            var model = await _context.Models.FindAsync(id);
+            if (model != null)
             {
-                _context.Sales.Remove(sale);
+                _context.Models.Remove(model);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SaleExists(int id)
+        private bool ModelExists(int id)
         {
-            return _context.Sales.Any(e => e.SaleId == id);
+            return _context.Models.Any(e => e.ModelId == id);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Car>
+﻿@model IEnumerable<ExpressVoitures.Models.Car>
 
 @{
     ViewData["Title"] = "Index";
@@ -16,12 +16,6 @@
                 @Html.DisplayNameFor(model => model.Year)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Brand)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Model)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Trim)
             </th>
             <th>
@@ -31,16 +25,19 @@
                 @Html.DisplayNameFor(model => model.PurchasePrice)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AvailabilityDate)
+                @Html.DisplayNameFor(model => model.SaleDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SalePrice)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.IsAvailable)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PhotoUrl)
+                @Html.DisplayNameFor(model => model.Make)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.DisplayNameFor(model => model.Model)
             </th>
             <th></th>
         </tr>
@@ -52,12 +49,6 @@
                 @Html.DisplayFor(modelItem => item.Year)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Brand)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Model)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Trim)
             </td>
             <td>
@@ -67,21 +58,24 @@
                 @Html.DisplayFor(modelItem => item.PurchasePrice)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AvailabilityDate)
+                @Html.DisplayFor(modelItem => item.SaleDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalePrice)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsAvailable)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PhotoUrl)
+                @Html.DisplayFor(modelItem => item.Make.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
+                @Html.DisplayFor(modelItem => item.Model.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.VIN">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.VIN">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.VIN">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.CarId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.CarId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.CarId">Delete</a>
             </td>
         </tr>
 }
