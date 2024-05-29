@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ExpressVoitures.Data;
 using ExpressVoitures.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Express_Voitures.Controllers
 {
@@ -19,6 +20,7 @@ namespace Express_Voitures.Controllers
             _context = context;
         }
 
+        // Accessible à tous les utilisateurs
         // GET: Cars
         public async Task<IActionResult> Index()
         {
@@ -46,7 +48,9 @@ namespace Express_Voitures.Controllers
             return View(car);
         }
 
+        // Restreindre l'accès aux administrateurs
         // GET: Cars/Create
+        [Authorize(Roles = "Admin")]     
         public IActionResult Create()
         {
             ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name");
@@ -58,6 +62,7 @@ namespace Express_Voitures.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CarId,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,SaleDate,SalePrice,IsAvailable")] Car car)
         {
@@ -73,6 +78,7 @@ namespace Express_Voitures.Controllers
         }
 
         // GET: Cars/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,6 +100,7 @@ namespace Express_Voitures.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CarId,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,SaleDate,SalePrice,IsAvailable")] Car car)
         {
@@ -128,6 +135,7 @@ namespace Express_Voitures.Controllers
         }
 
         // GET: Cars/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -149,6 +157,7 @@ namespace Express_Voitures.Controllers
 
         // POST: Cars/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {

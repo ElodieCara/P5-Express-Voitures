@@ -1,43 +1,31 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using ExpressVoitures.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
 using System.Threading.Tasks;
 
-namespace ExpressVoitures.Models
+namespace ExpressVoitures.Data
 {
     public static class IdentitySeedData
     {
-        private const string adminEmail = "admin@expressvoitures.com";
-        private const string adminPassword = "Admin@12345";
+        private const string AdminEmail = "admin@expressvoitures.com";
+        private const string AdminPassword = "Admin@12345";
 
-        public static async void EnsurePopulated(IApplicationBuilder app)
+        public static async Task EnsurePopulated(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            using (var scope = app.ApplicationServices.CreateScope())
+            // Créer le rôle Admin s'il n'existe pas
+            if (!await roleManager.RoleExistsAsync("Admin"))
             {
-                var services = scope.ServiceProvider;
-                var userManager = services.GetRequiredService<UserManager<User>>();
-                var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                await roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
 
-                if (!roleManager.Roles.Any())
+            // Créer l'utilisateur administrateur s'il n'existe pas
+            var user = await userManager.FindByEmailAsync(AdminEmail);
+            if (user == null)
+            {
+                user = new User { UserName = AdminEmail, Email = AdminEmail };
+                var result = await userManager.CreateAsync(user, AdminPassword);
+                if (result.Succeeded)
                 {
-                    await roleManager.CreateAsync(new IdentityRole("Admin"));
-                }
-
-                if (!userManager.Users.Any(u => u.UserName == adminEmail))
-                {
-                    var user = new User
-                    {
-                        UserName = adminEmail,
-                        Email = adminEmail
-                    };
-
-                    var result = await userManager.CreateAsync(user, adminPassword);
-                    if (result.Succeeded)
-                    {
-                        await userManager.AddToRoleAsync(user, "Admin");
-                    }
+                    await userManager.AddToRoleAsync(user, "Admin");
                 }
             }
         }
