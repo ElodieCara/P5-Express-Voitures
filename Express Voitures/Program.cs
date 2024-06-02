@@ -9,18 +9,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDefaultIdentity<User>(options =>
-{
-    options.SignIn.RequireConfirmedAccount = false; // Permettre la connexion sans confirmation de compte
-})
-    .AddRoles<IdentityRole>()
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>() // Ajoutez cette ligne pour enregistrer les services de rôle
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.Strict; // Ajustez ce paramètre selon vos besoins (Strict, Lax, None)
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Assurez-vous que les cookies sont sécurisés
+});
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Appel à la méthode EnsurePopulated
+// Appeler l'initialisation des données ici
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -47,6 +50,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.MapRazorPages();
 
 app.Run();

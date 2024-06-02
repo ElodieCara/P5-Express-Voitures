@@ -11,13 +11,11 @@ namespace ExpressVoitures.Data
 
         public static async Task EnsurePopulated(UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
         {
-            // Créer le rôle Admin s'il n'existe pas
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
                 await roleManager.CreateAsync(new IdentityRole("Admin"));
             }
 
-            // Créer l'utilisateur administrateur s'il n'existe pas
             var user = await userManager.FindByEmailAsync(AdminEmail);
             if (user == null)
             {
