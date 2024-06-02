@@ -10,6 +10,9 @@ namespace ExpressVoitures.Models
         [Key]
         public int CarId { get; set; }
 
+        [StringLength(17, MinimumLength = 17, ErrorMessage = "VIN must be 17 characters.")]
+        public string VIN { get; set; }
+
         [Required]
         [Range(1990, 2023, ErrorMessage = "Year must be between 1990 and the current year.")]
         public int Year { get; set; }

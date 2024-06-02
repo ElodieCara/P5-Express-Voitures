@@ -64,7 +64,7 @@ namespace Express_Voitures.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CarId,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,SaleDate,SalePrice,IsAvailable")] Car car)
+        public async Task<IActionResult> Create([Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,SaleDate,SalePrice,IsAvailable")] Car car)
         {
             if (ModelState.IsValid)
             {
@@ -102,7 +102,7 @@ namespace Express_Voitures.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CarId,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,SaleDate,SalePrice,IsAvailable")] Car car)
+        public async Task<IActionResult> Edit(int id, [Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,SaleDate,SalePrice,IsAvailable")] Car car)
         {
             if (id != car.CarId)
             {

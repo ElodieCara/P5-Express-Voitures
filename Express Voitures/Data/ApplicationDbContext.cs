@@ -17,22 +17,26 @@ namespace ExpressVoitures.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            // Configuration des relations entre les entités
             modelBuilder.Entity<Make>()
                 .HasMany(m => m.Models)
                 .WithOne(m => m.Make)
-                .HasForeignKey(m => m.MakeId);
+                .HasForeignKey(m => m.MakeId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Model>()
                 .HasMany(m => m.Cars)
                 .WithOne(c => c.Model)
-                .HasForeignKey(c => c.ModelId);
+                .HasForeignKey(c => c.ModelId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Car>()
                 .HasMany(c => c.Repairs)
                 .WithOne(r => r.Car)
-                .HasForeignKey(r => r.CarId);
+                .HasForeignKey(r => r.CarId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Corrigez les chemins de suppression en cascade
+            // Corrigez les chemins de suppression en cascade pour éviter les conflits
             modelBuilder.Entity<Car>()
                 .HasOne(c => c.Make)
                 .WithMany(m => m.Cars)
@@ -44,6 +48,11 @@ namespace ExpressVoitures.Data
                 .WithMany(m => m.Cars)
                 .HasForeignKey(c => c.ModelId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Car>()
+                .Property(c => c.VIN)
+                .HasMaxLength(17)
+                .IsFixedLength();
         }
     }
 }

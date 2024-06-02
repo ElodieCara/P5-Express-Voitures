@@ -10,13 +10,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddRoles<IdentityRole>() // Ajoutez cette ligne pour enregistrer les services de rôle
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
-    options.Cookie.SameSite = SameSiteMode.Strict; // Ajustez ce paramètre selon vos besoins (Strict, Lax, None)
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Assurez-vous que les cookies sont sécurisés
+    options.Cookie.SameSite = SameSiteMode.Strict;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
 builder.Services.AddControllersWithViews();
@@ -32,7 +32,7 @@ using (var scope = app.Services.CreateScope())
     await IdentitySeedData.EnsurePopulated(userManager, roleManager);
 }
 
-// Configurer la demande HTTP pipeline
+// Configurer le pipeline HTTP
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
