@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="VIN" class="control-label"></label>
@@ -24,11 +24,13 @@
             </div>
             <div class="form-group">
                 <label asp-for="MakeId" class="control-label"></label>
-                <select asp-for="MakeId" class ="form-control" asp-items="ViewBag.MakeId"></select>
+                <select asp-for="MakeId" class="form-control" asp-items="ViewBag.MakeId"></select>
+                <span asp-validation-for="MakeId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ModelId" class="control-label"></label>
-                <select asp-for="ModelId" class ="form-control" asp-items="ViewBag.ModelId"></select>
+                <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
+                <span asp-validation-for="ModelId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Trim" class="control-label"></label>
@@ -46,24 +48,24 @@
                 <span asp-validation-for="PurchasePrice" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SaleDate" class="control-label"></label>
-                <input asp-for="SaleDate" class="form-control" type="date" />
-                <span asp-validation-for="SaleDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SalePrice" class="control-label"></label>
-                <input asp-for="SalePrice" class="form-control" />
-                <span asp-validation-for="SalePrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhotoPath" class="control-label"></label>
-                <input asp-for="PhotoPath" class="form-control" type="file" />
-                <span asp-validation-for="PhotoPath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RepairCost" class="control-label"></label>
+                <input asp-for="RepairCost" class="form-control" />
+                <span asp-validation-for="RepairCost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AvailabilityDate" class="control-label"></label>
+                <input asp-for="AvailabilityDate" class="form-control" type="date" />
+                <span asp-validation-for="AvailabilityDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhotoPath" class="control-label"></label>
+                <input type="file" name="photo" class="form-control" />
+                <span asp-validation-for="PhotoPath" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
@@ -82,5 +84,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

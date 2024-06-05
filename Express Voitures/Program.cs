@@ -2,10 +2,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ExpressVoitures.Data;
 using ExpressVoitures.Models;
+using Microsoft.AspNetCore.Localization;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Ajouter les services au conteneur
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -23,7 +24,6 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Appeler l'initialisation des données ici
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -32,7 +32,17 @@ using (var scope = app.Services.CreateScope())
     await IdentitySeedData.EnsurePopulated(userManager, roleManager);
 }
 
-// Configurer le pipeline HTTP
+var cultureInfo = new CultureInfo("fr-FR");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(cultureInfo),
+    SupportedCultures = new List<CultureInfo> { cultureInfo },
+    SupportedUICultures = new List<CultureInfo> { cultureInfo }
+});
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");

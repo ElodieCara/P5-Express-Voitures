@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace ExpressVoitures.Models
 {
@@ -24,7 +25,7 @@ namespace ExpressVoitures.Models
         public int ModelId { get; set; }
 
         [StringLength(100)]
-        public required string Trim { get; set; }
+        public string Trim { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
@@ -32,30 +33,51 @@ namespace ExpressVoitures.Models
         public DateTime PurchaseDate { get; set; }
 
         [Required]
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
         public decimal PurchasePrice { get; set; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime? SaleDate { get; set; }
 
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
         public decimal? SalePrice { get; set; }
 
         [Required]
         public bool IsAvailable { get; set; }
 
         [StringLength(255)]
-        public string? PhotoPath { get; set; }
+        public string PhotoPath { get; set; }
 
         [StringLength(1000)]
-        public string? Description { get; set; }
+        public string Description { get; set; }
 
-        // Navigation properties
+        [Required]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime AvailabilityDate { get; set; }
+
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+        public decimal RepairCost { get; set; }
+
         [ForeignKey("MakeId")]
-        public required Make Make { get; set; }
+        public Make Make { get; set; }
 
         [ForeignKey("ModelId")]
-        public required Model Model { get; set; }
+        public Model Model { get; set; }
 
         public ICollection<Repair> Repairs { get; set; } = new List<Repair>();
+
+        [NotMapped]
+        public decimal CalculatedSalePrice
+        {
+            get
+            {
+                return PurchasePrice + RepairCost + 500;
+            }
+        }
     }
 }

@@ -6,53 +6,45 @@
 
 <h1>Voitures Disponibles</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Year)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Make.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Trim)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PurchaseDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PurchasePrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PhotoPath)
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<div class="container">
+    <div class="row">
+        @foreach (var car in Model)
         {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Year)</td>
-                <td>@Html.DisplayFor(modelItem => item.Make.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Model.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Trim)</td>
-                <td>@Html.DisplayFor(modelItem => item.PurchaseDate)</td>
-                <td>@Html.DisplayFor(modelItem => item.PurchasePrice)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.PhotoPath))
+            <div class="col-md-4 mb-4 d-flex align-items-stretch">
+                <div class="card card-custom">
+                    @if (!car.IsAvailable)
                     {
-                        <img src="@item.PhotoPath" alt="Photo" style="max-width: 100px; max-height: 100px;" />
+                        <div class="badge badge-sold">Vendu</div>
                     }
-                </td>
-            </tr>
+                    <img src="@car.PhotoPath" class="card-img-top" alt="@car.Model.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@car.Make.Name @car.Model.Name (@car.Year)</h5>
+                        <p class="card-text"><strong>Finition:</strong> @car.Trim</p>
+                       @*  <p class="card-text"><strong>Réparations:</strong> @car.Description</p>
+                        <p class="card-text"><strong>Coûts des réparations:</strong> €@car.RepairCost</p> *@
+                        @* <p class="card-text"><strong>Disponible à partir de:</strong> @car.AvailabilityDate.ToShortDateString()</p> *@
+                        <p class="card-text"><strong>Prix de vente:</strong> €@car.CalculatedSalePrice</p>
+                        @* <p class="card-text"><strong>Status:</strong> @(car.SaleDate.HasValue ? "Vendu" : "Disponible")</p> *@
+                    </div>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+</div>
+
+<style>
+    .badge-sold {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: red;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .card-custom {
+        border-radius: 10px;
+    }
+</style>
