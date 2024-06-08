@@ -69,7 +69,8 @@ namespace ExpressVoitures.Models
         [ForeignKey("ModelId")]
         public Model? Model { get; set; }
 
-        public ICollection<Repair> Repairs { get; set; } = new List<Repair>();
+        public ICollection<Repair> Repairs { get; } = [];
+
 
         [NotMapped]
         public decimal CalculatedSalePrice

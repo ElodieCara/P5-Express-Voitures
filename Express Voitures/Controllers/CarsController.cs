@@ -6,17 +6,12 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System.IO;
 using System.Threading.Tasks;
 
-
 namespace ExpressVoitures.Controllers
 {
-    public class CarsController : Controller
+    public class CarsController(ApplicationDbContext context) : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public CarsController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
+        private readonly ApplicationDbContext _context = context;
+       
 
         // GET: Cars
         public async Task<IActionResult> Index()
@@ -28,11 +23,16 @@ namespace ExpressVoitures.Controllers
             return View(cars);
         }
 
+        private void PopulateDropdowns(Car? car = null)
+        {
+            ViewBag.MakeId = new SelectList(_context.Makes, "MakeId", "Name", car?.MakeId);
+            ViewBag.ModelId = new SelectList(_context.Models, "ModelId", "Name", car?.ModelId);
+        }
+
         // GET: Cars/Create
         public IActionResult Create()
         {
-            ViewBag.MakeId = new SelectList(_context.Makes, "MakeId", "Name");
-            ViewBag.ModelId = new SelectList(_context.Models, "ModelId", "Name");
+            PopulateDropdowns();
             return View();
         }
 
@@ -41,10 +41,6 @@ namespace ExpressVoitures.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,SaleDate,SalePrice,IsAvailable,Description,RepairCost")] Car car, IFormFile photo)
         {
-            car.Model = _context.Models.Where<Model>(c => c.ModelId == car.ModelId).First();
-            car.Make = _context.Makes.Where<Make>(c => c.MakeId == car.MakeId).First();
-            ViewBag.MakeId = new SelectList(_context.Makes, "MakeId", "Name", car.MakeId);
-            ViewBag.ModelId = new SelectList(_context.Models, "ModelId", "Name", car.ModelId);
             if (ModelState.IsValid)
             {
                 if (photo != null && photo.Length > 0)
@@ -65,29 +61,32 @@ namespace ExpressVoitures.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
+            PopulateDropdowns(car);
             return View(car);
         }
 
-        //// GET: Cars/Edit/5
+        // GET: Cars/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            var car = await _context.Cars.FindAsync(id);
+            if (id == null)
+            {
+                return NotFound();
+            }
 
+            var car = await _context.Cars.FindAsync(id);
             if (car == null)
             {
                 return NotFound();
             }
 
-            ViewBag.MakeId = new SelectList(_context.Makes, "MakeId", "Name", car.MakeId);
-            ViewBag.ModelId = new SelectList(_context.Models, "ModelId", "Name", car.ModelId);
-
+            PopulateDropdowns(car);
             return View(car);
         }
 
         // POST: Cars/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,SaleDate,SalePrice,IsAvailable,PhotoPath,Description,RepairCost")] Car car, IFormFile photo)
+        public async Task<IActionResult> Edit(int id, [Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,SaleDate,SalePrice,IsAvailable,Description,RepairCost")] Car car, IFormFile photo)
         {
             if (id != car.CarId)
             {
@@ -100,7 +99,7 @@ namespace ExpressVoitures.Controllers
                 {
                     if (photo != null && photo.Length > 0)
                     {
-                        var fileName = Path.GetFileName(photo.FileName);
+                        var fileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(photo.FileName);
                         var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
 
                         using (var fileStream = new FileStream(filePath, FileMode.Create))
@@ -109,6 +108,10 @@ namespace ExpressVoitures.Controllers
                         }
 
                         car.PhotoPath = "/images/" + fileName;
+                    }
+                    else
+                    {
+                        _context.Entry(car).Property(x => x.PhotoPath).IsModified = false;
                     }
 
                     _context.Update(car);
@@ -127,8 +130,8 @@ namespace ExpressVoitures.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.MakeId = new SelectList(_context.Makes, "MakeId", "Name", car.MakeId);
-            ViewBag.ModelId = new SelectList(_context.Models, "ModelId", "Name", car.ModelId);
+
+            PopulateDropdowns(car);
             return View(car);
         }
 
@@ -166,10 +169,44 @@ namespace ExpressVoitures.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Cars/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var car = await _context.Cars
+                .Include(c => c.Make)
+                .Include(c => c.Model)
+                .FirstOrDefaultAsync(m => m.CarId == id);
+            if (car == null)
+            {
+                return NotFound();
+            }
+
+            return View(car);
+        }
+
+        // POST: Cars/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var car = await _context.Cars.FindAsync(id);
+            if (car == null)
+            {
+                return NotFound();
+            }
+            _context.Cars.Remove(car);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
         private bool CarExists(int id)
         {
             return _context.Cars.Any(e => e.CarId == id);
         }
     }
 }
-

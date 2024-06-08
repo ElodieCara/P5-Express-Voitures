@@ -39,8 +39,8 @@ CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
     DefaultRequestCulture = new RequestCulture(cultureInfo),
-    SupportedCultures = new List<CultureInfo> { cultureInfo },
-    SupportedUICultures = new List<CultureInfo> { cultureInfo }
+    SupportedCultures = [cultureInfo],
+    SupportedUICultures = [cultureInfo]
 });
 
 if (!app.Environment.IsDevelopment())

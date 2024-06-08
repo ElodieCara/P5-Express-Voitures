@@ -16,12 +16,9 @@
                     {
                         <div class="badge badge-sold">Vendu</div>
                     }
-                    @if (!string.IsNullOrEmpty(car.PhotoPath))
-                    {
-                        <img src="@car.PhotoPath" class="card-img-top" alt="@car.Model.Name">
-                    }
+                    <img src="@car.PhotoPath" class="card-img-top" alt="@car.Model?.Name">
                     <div class="card-body">
-                        <h5 class="card-title">@car.Make.Name @car.Model.Name (@car.Year)</h5>
+                        <h5 class="card-title">@car.Make?.Name @car.Model?.Name (@car.Year)</h5>
                         <p class="card-text"><strong>Finition:</strong> @car.Trim</p>
                         <p class="card-text"><strong>Prix de vente:</strong> €@car.CalculatedSalePrice</p>
                     </div>
