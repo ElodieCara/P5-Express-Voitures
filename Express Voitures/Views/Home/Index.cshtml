@@ -16,15 +16,14 @@
                     {
                         <div class="badge badge-sold">Vendu</div>
                     }
-                    <img src="@car.PhotoPath" class="card-img-top" alt="@car.Model.Name">
+                    @if (!string.IsNullOrEmpty(car.PhotoPath))
+                    {
+                        <img src="@car.PhotoPath" class="card-img-top" alt="@car.Model.Name">
+                    }
                     <div class="card-body">
                         <h5 class="card-title">@car.Make.Name @car.Model.Name (@car.Year)</h5>
                         <p class="card-text"><strong>Finition:</strong> @car.Trim</p>
-                       @*  <p class="card-text"><strong>Réparations:</strong> @car.Description</p>
-                        <p class="card-text"><strong>Coûts des réparations:</strong> €@car.RepairCost</p> *@
-                        @* <p class="card-text"><strong>Disponible à partir de:</strong> @car.AvailabilityDate.ToShortDateString()</p> *@
                         <p class="card-text"><strong>Prix de vente:</strong> €@car.CalculatedSalePrice</p>
-                        @* <p class="card-text"><strong>Status:</strong> @(car.SaleDate.HasValue ? "Vendu" : "Disponible")</p> *@
                     </div>
                 </div>
             </div>

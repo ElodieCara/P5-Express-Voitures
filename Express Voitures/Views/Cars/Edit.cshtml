@@ -45,7 +45,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="PurchasePrice" class="control-label"></label>
-                <input asp-for="PurchasePrice" class="form-control" />
+                <input asp-for="PurchasePrice" class="form-control" data-type="currency" />
                 <span asp-validation-for="PurchasePrice" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -55,7 +55,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="SalePrice" class="control-label"></label>
-                <input asp-for="SalePrice" class="form-control" />
+                <input asp-for="SalePrice" class="form-control" data-type="currency" />
                 <span asp-validation-for="SalePrice" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -65,7 +65,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="RepairCost" class="control-label"></label>
-                <input asp-for="RepairCost" class="form-control" />
+                <input asp-for="RepairCost" class="form-control" data-type="currency" />
                 <span asp-validation-for="RepairCost" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -95,6 +95,17 @@
 </div>
 
 @section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            form.addEventListener("submit", function (event) {
+                const priceInputs = form.querySelectorAll("input[data-type='currency']");
+                priceInputs.forEach(function (input) {
+                    input.value = input.value.replace(/\s/g, '').replace(',', '.');
+                });
+            });
+        });
+    </script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

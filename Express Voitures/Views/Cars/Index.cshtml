@@ -25,6 +25,7 @@
             <th>@Html.DisplayNameFor(model => model.AvailabilityDate)</th>
             <th>@Html.DisplayNameFor(model => model.SalePrice)</th>
             <th>@Html.DisplayNameFor(model => model.IsAvailable)</th>
+            <th>@Html.DisplayNameFor(model => model.PhotoPath)</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -43,6 +44,12 @@
                 <td>@Html.DisplayFor(modelItem => item.AvailabilityDate)</td>
                 <td>@Html.DisplayFor(modelItem => item.SalePrice)</td>
                 <td>@Html.DisplayFor(modelItem => item.IsAvailable)</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.PhotoPath))
+                    {
+                        <img src="@item.PhotoPath" alt="Photo" style="max-width: 100px; max-height: 100px;" />
+                    }
+                </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-primary">Edit</a>
                     @if (item.IsAvailable)

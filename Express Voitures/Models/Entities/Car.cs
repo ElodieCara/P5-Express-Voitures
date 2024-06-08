@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace ExpressVoitures.Models
 {
@@ -12,7 +11,7 @@ namespace ExpressVoitures.Models
         public int CarId { get; set; }
 
         [StringLength(17, MinimumLength = 17, ErrorMessage = "VIN must be 17 characters.")]
-        public string VIN { get; set; }
+        public string? VIN { get; set; }
 
         [Required]
         [Range(1990, 2023, ErrorMessage = "Year must be between 1990 and the current year.")]
@@ -25,7 +24,7 @@ namespace ExpressVoitures.Models
         public int ModelId { get; set; }
 
         [StringLength(100)]
-        public string Trim { get; set; }
+        public string? Trim { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
@@ -49,10 +48,10 @@ namespace ExpressVoitures.Models
         public bool IsAvailable { get; set; }
 
         [StringLength(255)]
-        public string PhotoPath { get; set; }
+        public string? PhotoPath { get; set; }
 
         [StringLength(1000)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
@@ -63,11 +62,12 @@ namespace ExpressVoitures.Models
         [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
         public decimal RepairCost { get; set; }
 
+        // Navigation properties
         [ForeignKey("MakeId")]
-        public Make Make { get; set; }
+        public Make? Make { get; set; }
 
         [ForeignKey("ModelId")]
-        public Model Model { get; set; }
+        public Model? Model { get; set; }
 
         public ICollection<Repair> Repairs { get; set; } = new List<Repair>();
 
@@ -80,4 +80,5 @@ namespace ExpressVoitures.Models
             }
         }
     }
+
 }
