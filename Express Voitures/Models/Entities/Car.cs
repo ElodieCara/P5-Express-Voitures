@@ -33,7 +33,7 @@ namespace ExpressVoitures.Models
 
         [Required]
         [DataType(DataType.Currency)]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:0.##}", ApplyFormatInEditMode = true)]
         public decimal PurchasePrice { get; set; }
 
         [DataType(DataType.Date)]
@@ -41,7 +41,7 @@ namespace ExpressVoitures.Models
         public DateTime? SaleDate { get; set; }
 
         [DataType(DataType.Currency)]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:0.##}", ApplyFormatInEditMode = true)]
         public decimal? SalePrice { get; set; }
 
         [Required]
@@ -59,7 +59,7 @@ namespace ExpressVoitures.Models
         public DateTime AvailabilityDate { get; set; }
 
         [DataType(DataType.Currency)]
-        [DisplayFormat(DataFormatString = "{0:N2}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:0.##}", ApplyFormatInEditMode = true)]
         public decimal RepairCost { get; set; }
 
         // Navigation properties
