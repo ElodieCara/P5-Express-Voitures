@@ -195,17 +195,19 @@ namespace Express_Voitures.Migrations
                 {
                     CarId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    VIN = table.Column<string>(type: "nchar(17)", fixedLength: true, maxLength: 17, nullable: true),
                     Year = table.Column<int>(type: "int", nullable: false),
                     MakeId = table.Column<int>(type: "int", nullable: false),
                     ModelId = table.Column<int>(type: "int", nullable: false),
-                    Trim = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Trim = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PurchasePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     SaleDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     SalePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false),
                     PhotoPath = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
+                    AvailabilityDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

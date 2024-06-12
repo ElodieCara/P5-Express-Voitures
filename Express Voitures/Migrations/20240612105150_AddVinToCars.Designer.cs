@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Express_Voitures.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240529160857_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240612105150_AddVinToCars")]
+    partial class AddVinToCars
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,6 +32,9 @@ namespace Express_Voitures.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CarId"));
+
+                    b.Property<DateTime>("AvailabilityDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
@@ -63,9 +66,13 @@ namespace Express_Voitures.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Trim")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("VIN")
+                        .HasMaxLength(17)
+                        .HasColumnType("nchar(17)")
+                        .IsFixedLength();
 
                     b.Property<int>("Year")
                         .HasColumnType("int");

@@ -30,6 +30,9 @@ namespace Express_Voitures.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CarId"));
 
+                    b.Property<DateTime>("AvailabilityDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
@@ -60,12 +63,10 @@ namespace Express_Voitures.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Trim")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("VIN")
-                        .IsRequired()
                         .HasMaxLength(17)
                         .HasColumnType("nchar(17)")
                         .IsFixedLength();

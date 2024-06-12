@@ -5,7 +5,7 @@
 namespace Express_Voitures.Migrations
 {
     /// <inheritdoc />
-    public partial class EnsureIdentitySchema : Migration
+    public partial class AddVinToCars : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

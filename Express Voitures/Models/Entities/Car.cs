@@ -58,9 +58,9 @@ namespace ExpressVoitures.Models
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime AvailabilityDate { get; set; }
 
-        [DataType(DataType.Currency)]
-        [DisplayFormat(DataFormatString = "{0:0.##}", ApplyFormatInEditMode = true)]
-        public decimal RepairCost { get; set; }
+        //[DataType(DataType.Currency)]
+        //[DisplayFormat(DataFormatString = "{0:0.##}", ApplyFormatInEditMode = true)]
+        //public decimal RepairCost { get; set; }
 
         // Navigation properties
         [ForeignKey("MakeId")]
@@ -77,7 +77,7 @@ namespace ExpressVoitures.Models
         {
             get
             {
-                return PurchasePrice + RepairCost + 500;
+                return PurchasePrice + Repairs.Sum(r => r.Cost) + 500;
             }
         }
     }

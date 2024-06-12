@@ -1,47 +1,36 @@
 ﻿@model IEnumerable<ExpressVoitures.Models.Repair>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Repairs";
 }
 
-<h1>Index</h1>
+<h1>Repairs</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-success">Add New Repair</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cost)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Car)
-            </th>
-            <th></th>
+            <th>@Html.DisplayNameFor(model => model.Description)</th>
+            <th>@Html.DisplayNameFor(model => model.Cost)</th>
+            <th>@Html.DisplayNameFor(model => model.Car.VIN)</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Car.CarId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.RepairId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.RepairId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.RepairId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td>@Html.DisplayFor(modelItem => item.Cost)</td>
+                <td>@Html.DisplayFor(modelItem => item.Car.VIN)</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.RepairId" class="btn btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@item.RepairId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

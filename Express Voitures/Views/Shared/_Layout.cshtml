@@ -15,6 +15,22 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <style>
+        #wrapper {
+            display: flex;
+            align-items: stretch;
+        }
+
+        #sidebar-wrapper {
+            min-width: 250px;
+            max-width: 250px;
+        }
+
+        #page-content-wrapper {
+            width: 100%;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -45,10 +61,18 @@
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <div id="wrapper">
+        @if (Context.Request.Path.StartsWithSegments("/Cars") || Context.Request.Path.StartsWithSegments("/Repairs"))
+        {
+            <partial name="Dashboard" />
+        }
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+        </div>
     </div>
 
     <footer class="border-top footer text-muted">
