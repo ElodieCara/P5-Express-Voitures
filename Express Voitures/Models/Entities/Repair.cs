@@ -9,17 +9,20 @@ namespace ExpressVoitures.Models
         public int RepairId { get; set; }
 
         [Required]
-        public int CarId { get; set; }
+        public int CarId { get; set; } 
 
-        [Required]
-        [StringLength(255)]
-        public required string Description { get; set; }
-
-        [Required]
-        public decimal Cost { get; set; }
-
-        // Navigation property
         [ForeignKey("CarId")]
-        public required Car Car { get; set; }
+        public Car? Car { get; set; } 
+
+        [Required]
+        [StringLength(1000)]
+        [Display(Name = "Description")]
+        public string? Description { get; set; }
+
+        [Required]
+        [DataType(DataType.Currency)]
+        [DisplayFormat(DataFormatString = "{0:0.##}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Coût")]
+        public decimal Cost { get; set; }
     }
 }

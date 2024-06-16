@@ -12,25 +12,10 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Express_Voitures.styles.css" asp-append-version="true" />
+    <script src="https://kit.fontawesome.com/6bc5c172d1.js" crossorigin="anonymous"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-    <style>
-        #wrapper {
-            display: flex;
-            align-items: stretch;
-        }
-
-        #sidebar-wrapper {
-            min-width: 250px;
-            max-width: 250px;
-        }
-
-        #page-content-wrapper {
-            width: 100%;
-            padding: 20px;
-        }
-    </style>
 </head>
 <body>
     <header>
@@ -50,7 +35,7 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Cars" asp-action="Index">Cars</a>
-                            </li>
+                            </li>                   
                         }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
@@ -61,18 +46,10 @@
             </div>
         </nav>
     </header>
-    <div id="wrapper">
-        @if (Context.Request.Path.StartsWithSegments("/Cars") || Context.Request.Path.StartsWithSegments("/Repairs"))
-        {
-            <partial name="Dashboard" />
-        }
-        <div id="page-content-wrapper">
-            <div class="container-fluid">
-                <main role="main" class="pb-3">
-                    @RenderBody()
-                </main>
-            </div>
-        </div>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
     </div>
 
     <footer class="border-top footer text-muted">

@@ -1,12 +1,12 @@
 ﻿@model ExpressVoitures.Models.Car
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Ajouter une nouvelle voiture";
 }
 
-<h1>Create</h1>
+<h1>Ajouter une nouvelle voiture</h1>
 
-<h4>Car</h4>
+<h4>Voiture</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -44,7 +44,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="PurchasePrice" class="control-label"></label>
-                <input asp-for="PurchasePrice" class="form-control" data-type="currency" />
+                <input asp-for="PurchasePrice" class="form-control" />
                 <span asp-validation-for="PurchasePrice" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -62,35 +62,24 @@
                 <input type="file" name="photo" class="form-control" />
                 <span asp-validation-for="PhotoPath" class="text-danger"></span>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsAvailable" /> @Html.DisplayNameFor(model => model.IsAvailable)
-                </label>
+            <div class="form-group">
+                <label asp-for="IsAvailable" class="control-label">Statut</label>
+                <select asp-for="IsAvailable" class="form-control">
+                    <option value="true">Disponible</option>
+                    <option value="false">Non Disponible</option>
+                </select>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Créer" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index">Retour à la liste</a>
 </div>
 
 @section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const form = document.querySelector("form");
-            form.addEventListener("submit", function (event) {
-                const priceInputs = form.querySelectorAll("input[data-type='currency']");
-                priceInputs.forEach(function (input) {
-                    input.value = input.value.replace(/\s/g, '').replace(',', '.');
-                });
-            });
-        });
-    </script>
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    <partial name="_ValidationScriptsPartial" />
 }
