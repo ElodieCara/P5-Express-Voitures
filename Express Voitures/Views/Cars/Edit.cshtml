@@ -9,7 +9,7 @@
 <h4>Voiture</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="CarId" />
@@ -26,12 +26,22 @@
             </div>
             <div class="form-group">
                 <label asp-for="MakeId" class="control-label"></label>
-                <select asp-for="MakeId" class="form-control" asp-items="ViewBag.MakeId"></select>
+                <div class="input-group">
+                    <select asp-for="MakeId" class="form-control" asp-items="ViewBag.MakeId"></select>
+                    <div class="input-group-append">
+                        <a href="~/Makes/Create" class="btn btn-outline-secondary">+</a>
+                    </div>
+                </div>
                 <span asp-validation-for="MakeId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ModelId" class="control-label"></label>
-                <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
+                <div class="input-group">
+                    <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
+                    <div class="input-group-append">
+                        <a href="~/Models/Create" class="btn btn-outline-secondary">+</a>
+                    </div>
+                </div>
                 <span asp-validation-for="ModelId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -63,12 +73,18 @@
                 <label class="control-label">Photo actuelle</label>
                 @if (!string.IsNullOrEmpty(Model.PhotoPath))
                 {
-                    <div>
-                        <img src="@Model.PhotoPath" alt="Photo actuelle" style="max-width: 200px; max-height: 200px;" />
-                        <p>@System.IO.Path.GetFileName(Model.PhotoPath)</p>
+                    <div class="mb-3">
+                        <img src="@Model.PhotoPath" alt="Photo actuelle" class="img-thumbnail" style="max-width: 200px; max-height: 200px;" />
                     </div>
                 }
-                <input type="file" name="photo" class="form-control" />
+                <div class="form-group">
+                    <input type="file" name="photo" id="photoInput" style="display:none;">
+                    <label for="photoInput" class="btn btn-custom">Modifier la photo</label>
+                    <span id="fileName" style="margin-left: 10px;"></span>
+                </div>
+                <div class="form-group mt-3">
+                    <img id="newPhotoPreview" src="#" alt="Aperçu de la nouvelle photo" class="img-thumbnail" style="display:none; max-width: 200px; max-height: 200px;" />
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="Status" class="control-label">Statut</label>
@@ -78,8 +94,40 @@
                     <option value="Vendu">Vendu</option>
                 </select>
             </div>
+
+            <!-- Section for Repairs -->
             <div class="form-group">
-                <input type="submit" value="Modifier" class="btn btn-primary" />
+                <label class="control-label">Réparations</label>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Coût</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="repairs-list">
+                        @foreach (var repair in Model.Repairs)
+                        {
+                            <tr>
+                                <td>@repair.RepairDescription <input type="hidden" name="RepairsDescriptions" value="@repair.RepairDescription" /></td>
+                                <td>@repair.Cost € <input type="hidden" name="RepairsCosts" value="@repair.Cost" /></td>
+                                <td><button type="button" class="btn btn-danger btn-sm remove-repair">Supprimer</button></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="input-group mb-3">
+                    <input type="text" id="new-repair-description" class="form-control" placeholder="Description de la réparation" />
+                    <input type="number" id="new-repair-cost" class="form-control" placeholder="Coût de la réparation" />
+                    <div class="input-group-append">
+                        <button type="button" id="add-repair" class="btn btn-outline-secondary">Ajouter</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Modifier" class="btn btn-custom" />
             </div>
         </form>
     </div>
@@ -90,14 +138,57 @@
 </div>
 
 @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
     <script>
-        $(document).ready(function () {
-            $("form").submit(function () {
-                $("input[type='file']").prop('required', false);
-            });
+        document.getElementById('photoInput').addEventListener('change', function (e) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                var preview = document.getElementById('newPhotoPreview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            }
+            reader.readAsDataURL(this.files[0]);
+
+            // Mise à jour du texte du label et affichage du nom du fichier
+            var fileNameSpan = document.getElementById('fileName');
+            fileNameSpan.textContent = this.files[0].name;
+        });
+
+        document.getElementById('add-repair').addEventListener('click', function () {
+            var description = document.getElementById('new-repair-description').value;
+            var cost = document.getElementById('new-repair-cost').value;
+
+            if (description && cost) {
+                var repairsList = document.getElementById('repairs-list');
+
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td>' + description + '<input type="hidden" name="RepairsDescriptions" value="' + description + '" /></td>' +
+                    '<td>' + cost + ' €<input type="hidden" name="RepairsCosts" value="' + cost + '" /></td>' +
+                    '<td><button type="button" class="btn btn-danger btn-sm remove-repair">Supprimer</button></td>';
+
+                repairsList.appendChild(tr);
+
+                document.getElementById('new-repair-description').value = '';
+                document.getElementById('new-repair-cost').value = '';
+            }
+        });
+
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('remove-repair')) {
+                e.target.closest('tr').remove();
+            }
         });
     </script>
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
 }
+
+<style>
+    .btn-custom {
+        background-color: #9282F5;
+        color: white;
+        border: none;
+    }
+
+        .btn-custom:hover {
+            background-color: #7a6fde;
+        }
+</style>

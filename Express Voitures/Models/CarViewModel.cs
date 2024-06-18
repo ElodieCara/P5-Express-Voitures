@@ -14,6 +14,8 @@
         public required string PhotoUrl { get; set; }
         public required string Description { get; set; }
         public required ICollection<RepairViewModel> Repairs { get; set; }
+
+        public decimal CalculatedSalePrice => PurchasePrice + Repairs.Sum(r => r.Cost) + 500;
     }
 
     public class RepairViewModel

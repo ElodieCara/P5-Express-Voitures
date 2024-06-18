@@ -56,7 +56,6 @@ namespace ExpressVoitures.Models
         [Display(Name = "Disponible")]
         public bool IsAvailable { get; set; }
 
-        //[StringLength(255)]
         [Display(Name = "Photo")]
         public string? PhotoPath { get; set; }
 
@@ -117,12 +116,14 @@ namespace ExpressVoitures.Models
         public ICollection<Repair> Repairs { get; } = new List<Repair>();
 
         [NotMapped]
-        public decimal CalculatedSalePrice
-        {
-            get
-            {
-                return PurchasePrice + Repairs.Sum(r => r.Cost) + 500;
-            }
-        }
+        [Display(Name = "Descriptif des réparations")]
+        public string RepairDescriptions => string.Join(", ", Repairs.Select(r => r.RepairDescription));
+
+        [NotMapped]
+        [Display(Name = "Coût total des réparations")]
+        public decimal TotalRepairCost => Repairs.Sum(r => r.Cost);
+
+        [NotMapped]
+        public decimal CalculatedSalePrice => PurchasePrice + TotalRepairCost + 500;
     }
 }

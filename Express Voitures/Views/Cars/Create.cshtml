@@ -24,12 +24,22 @@
             </div>
             <div class="form-group">
                 <label asp-for="MakeId" class="control-label"></label>
-                <select asp-for="MakeId" class="form-control" asp-items="ViewBag.MakeId"></select>
+                <div class="input-group">
+                    <select asp-for="MakeId" class="form-control" asp-items="ViewBag.MakeId"></select>
+                    <div class="input-group-append">
+                        <a href="~/Makes/Create" class="btn btn-outline-secondary">+</a>
+                    </div>
+                </div>
                 <span asp-validation-for="MakeId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ModelId" class="control-label"></label>
-                <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
+                <div class="input-group">
+                    <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
+                    <div class="input-group-append">
+                        <a href="~/Models/Create" class="btn btn-outline-secondary">+</a>
+                    </div>
+                </div>
                 <span asp-validation-for="ModelId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -69,17 +79,58 @@
                     <option value="false">Non Disponible</option>
                 </select>
             </div>
-            <div class="form-group">
+
+            <!-- Section pour les réparations -->
+            <h4>Réparations</h4>
+            <div id="repairs-section">
+                <div class="form-group">
+                    <label for="new-repair-description">Description</label>
+                    <input type="text" class="form-control" id="new-repair-description" />
+                </div>
+                <div class="form-group">
+                    <label for="new-repair-cost">Coût</label>
+                    <input type="number" class="form-control" id="new-repair-cost" />
+                </div>
+                <button type="button" class="btn btn-secondary" id="add-repair">Ajouter réparation</button>
+            </div>
+            <ul id="repairs-list" class="list-group mt-3"></ul>
+
+            <div class="form-group mt-4">
                 <input type="submit" value="Créer" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Retour à la liste</a>
-</div>
-
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.getElementById('add-repair').addEventListener('click', function () {
+            var description = document.getElementById('new-repair-description').value;
+            var cost = document.getElementById('new-repair-cost').value;
+
+            if (description && cost) {
+                var repairItem = document.createElement('li');
+                repairItem.className = 'list-group-item';
+                repairItem.innerHTML = `${description}: ${cost} €`;
+                document.getElementById('repairs-list').appendChild(repairItem);
+
+                // Ajouter des champs cachés pour soumettre les réparations avec le formulaire
+                var hiddenDescription = document.createElement('input');
+                hiddenDescription.type = 'hidden';
+                hiddenDescription.name = 'RepairsDescriptions';
+                hiddenDescription.value = description;
+                document.getElementById('repairs-list').appendChild(hiddenDescription);
+
+                var hiddenCost = document.createElement('input');
+                hiddenCost.type = 'hidden';
+                hiddenCost.name = 'RepairsCosts';
+                hiddenCost.value = cost;
+                document.getElementById('repairs-list').appendChild(hiddenCost);
+
+                document.getElementById('new-repair-description').value = '';
+                document.getElementById('new-repair-cost').value = '';
+            }
+        });
+    </script>
 }

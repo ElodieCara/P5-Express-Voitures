@@ -23,7 +23,9 @@ namespace ExpressVoitures.Controllers
         [HttpGet]
         public IActionResult Login(string returnUrl = "/")
         {
-            return View(new LoginViewModel { ReturnUrl = returnUrl });
+            returnUrl = returnUrl ?? Url.Content("~/Cars/Index");
+            var model = new LoginViewModel { ReturnUrl = returnUrl };
+            return View(model);
         }
 
         [HttpPost]

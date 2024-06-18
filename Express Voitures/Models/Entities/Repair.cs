@@ -16,8 +16,8 @@ namespace ExpressVoitures.Models
 
         [Required]
         [StringLength(1000)]
-        [Display(Name = "Description")]
-        public string? Description { get; set; }
+        [Display(Name = "Réparation")]
+        public string? RepairDescription { get; set; }
 
         [Required]
         [DataType(DataType.Currency)]

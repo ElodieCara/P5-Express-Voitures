@@ -7,55 +7,65 @@
 <h1>Gestion des voitures</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-success">Ajouter une nouvelle voiture</a>
+    <a asp-action="Create" class="btn btn-success mb-3">Ajouter une nouvelle voiture</a>
 </p>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.VIN)</th>
-            <th>@Html.DisplayNameFor(model => model.Year)</th>
-            <th>@Html.DisplayName("Make")</th>
-            <th>@Html.DisplayName("Model")</th>
-            <th>@Html.DisplayNameFor(model => model.Trim)</th>
-            <th>@Html.DisplayNameFor(model => model.PurchaseDate)</th>
-            <th>@Html.DisplayNameFor(model => model.PurchasePrice)</th>
-            <th>@Html.DisplayNameFor(model => model.Description)</th>
-            <th>@Html.DisplayNameFor(model => model.AvailabilityDate)</th>
-            <th>@Html.DisplayNameFor(model => model.SalePrice)</th>
-            <th>@Html.DisplayNameFor(model => model.IsAvailable)</th>
-            <th>@Html.DisplayNameFor(model => model.PhotoPath)</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+<div class="table-responsive">
+    <table class="table table-hover table-bordered">
+        <thead class="thead-dark">
             <tr>
-                <td>@Html.DisplayFor(modelItem => item.VIN)</td>
-                <td>@Html.DisplayFor(modelItem => item.Year)</td>
-                <td>@(item.Make != null ? item.Make.Name : "N/A")</td>
-                <td>@(item.Model != null ? item.Model.Name : "N/A")</td>
-                <td>@Html.DisplayFor(modelItem => item.Trim)</td>
-                <td>@Html.DisplayFor(modelItem => item.PurchaseDate)</td>
-                <td>@item.PurchasePrice.ToString("N2") €</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>@Html.DisplayFor(modelItem => item.AvailabilityDate)</td>
-                <td>@item.SalePrice?.ToString("N2") €</td>
-                <td>@item.Status</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.PhotoPath))
-                    {
-                        <img src="@item.PhotoPath" alt="Photo" style="max-width: 100px; max-height: 100px;" />
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-primary">Modifier</a>
-                    <form asp-action="Delete" asp-route-id="@item.CarId" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-danger">Supprimer</button>
-                    </form>
-                </td>
+                <th>@Html.DisplayNameFor(model => model.VIN)</th>
+                <th>@Html.DisplayNameFor(model => model.Year)</th>
+                <th>@Html.DisplayName("Make")</th>
+                <th>@Html.DisplayName("Model")</th>
+                <th>@Html.DisplayNameFor(model => model.Trim)</th>
+                <th>@Html.DisplayNameFor(model => model.PurchaseDate)</th>
+                <th>@Html.DisplayNameFor(model => model.PurchasePrice)</th>
+                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th>@Html.DisplayNameFor(model => model.AvailabilityDate)</th>
+                <th>@Html.DisplayNameFor(model => model.SalePrice)</th>
+                <th>@Html.DisplayNameFor(model => model.IsAvailable)</th>
+                <th>@Html.DisplayNameFor(model => model.PhotoPath)</th>
+                <th>@Html.DisplayNameFor(model => model.RepairDescriptions)</th>
+                <th>@Html.DisplayNameFor(model => model.TotalRepairCost)</th>
+                <th>Actions</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.VIN)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Year)</td>
+                    <td>@(item.Make != null ? item.Make.Name : "N/A")</td>
+                    <td>@(item.Model != null ? item.Model.Name : "N/A")</td>
+                    <td>@Html.DisplayFor(modelItem => item.Trim)</td>
+                    <td>@item.PurchaseDate.ToString("yyyy-MM-dd")</td>
+                    <td>@item.PurchasePrice.ToString("N2") €</td>
+                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                    <td>@item.AvailabilityDate.ToString("yyyy-MM-dd")</td>
+                    <td>@(item.SalePrice.HasValue ? item.SalePrice.Value.ToString("N2") + " €" : "N/A")</td>
+                    <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(item.PhotoPath))
+                        {
+                            <img src="@item.PhotoPath" alt="Photo" class="img-thumbnail" style="max-width: 100px; max-height: 100px;" />
+                        }
+                    </td>
+                    <td>@item.RepairDescriptions</td>
+                    <td>@item.TotalRepairCost.ToString("N2") €</td>
+                    <td class="d-flex flex-column align-items-center">
+                        <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-primary btn-sm mb-2">Modifier</a>
+                        <form asp-action="Delete" asp-route-id="@item.CarId" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
