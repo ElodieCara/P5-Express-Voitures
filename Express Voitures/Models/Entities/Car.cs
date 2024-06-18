@@ -121,9 +121,6 @@ namespace ExpressVoitures.Models
 
         [NotMapped]
         [Display(Name = "Coût total des réparations")]
-        public decimal TotalRepairCost => Repairs.Sum(r => r.Cost);
-
-        [NotMapped]
-        public decimal CalculatedSalePrice => PurchasePrice + TotalRepairCost + 500;
+        public decimal TotalRepairCost => Repairs.Sum(r => r.Cost);       
     }
 }

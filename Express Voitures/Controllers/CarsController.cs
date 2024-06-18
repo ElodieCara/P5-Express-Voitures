@@ -72,6 +72,12 @@ public class CarsController : Controller
             }
 
             await _context.SaveChangesAsync();
+
+            // Calculer et mettre à jour le prix de vente après l'ajout des réparations
+            car.SalePrice = car.PurchasePrice + RepairsCosts.Sum() + 500;
+            _context.Update(car);
+            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -156,7 +162,7 @@ public class CarsController : Controller
                 _context.Repairs.Remove(repair);
             }
 
-            // Ajouter les nouvelles réparations sans supprimer les existantes
+            // Ajouter les nouvelles réparations
             for (int i = 0; i < RepairsDescriptions.Length; i++)
             {
                 var newRepair = new Repair
@@ -168,6 +174,11 @@ public class CarsController : Controller
                 _context.Repairs.Add(newRepair);
             }
 
+            //// Calculer et mettre à jour le prix de vente après l'ajout des réparations
+            //car.SalePrice = car.CalculatedSalePrice;
+            //_context.Update(car);
+
+            car.SalePrice = car.PurchasePrice + RepairsCosts.Sum() + 500;
             await _context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
