@@ -25,6 +25,17 @@ public class CarsController : Controller
         return View(cars);
     }
 
+    [HttpGet("Catalogue")]
+    public async Task<IActionResult> Catalogue()
+    {
+        var cars = await _context.Cars
+            .Include(c => c.Make)
+            .Include(c => c.Model)
+            .Include(c => c.Repairs)
+            .ToListAsync();
+        return View(cars);
+    }
+
     private void PopulateDropdowns(Car? car = null)
     {
         ViewBag.MakeId = new SelectList(_context.Makes, "MakeId", "Name", car?.MakeId);
