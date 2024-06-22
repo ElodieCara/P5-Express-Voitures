@@ -6,97 +6,119 @@
 
 <h1>Ajouter une nouvelle voiture</h1>
 
-<h4>Voiture</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row  justify-content-center">
+    <div class="col-md-8">
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="VIN" class="control-label"></label>
-                <input asp-for="VIN" class="form-control" />
-                <span asp-validation-for="VIN" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Year" class="control-label"></label>
-                <input asp-for="Year" class="form-control" />
-                <span asp-validation-for="Year" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MakeId" class="control-label"></label>
-                <div class="input-group">
-                    <select asp-for="MakeId" class="form-control" asp-items="ViewBag.MakeId"></select>
-                    <div class="input-group-append">
-                        <a href="~/Makes/Create" class="btn btn-outline-secondary">+</a>
-                    </div>
+            <div class="row">
+                <!-- Première colonne -->
+                <div class="col-lg-6">
+                    <!-- Section Informations Principales -->
+                    <fieldset class="p-3 mb-3" style="border: 1px solid #9282F5; background-color: #f8f9fa;">
+                        <legend class="w-auto">Informations Principales</legend>
+                        <div class="form-group">
+                            <label asp-for="VIN" class="control-label"></label>
+                            <input asp-for="VIN" class="form-control" />
+                            <span asp-validation-for="VIN" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Year" class="control-label"></label>
+                            <input asp-for="Year" class="form-control" />
+                            <span asp-validation-for="Year" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="MakeId" class="control-label"></label>
+                            <div class="input-group">
+                                <select asp-for="MakeId" class="form-control" asp-items="ViewBag.MakeId"></select>
+                                <div class="input-group-append">
+                                    <a href="~/Makes/Create" class="btn btn-outline-secondary">+</a>
+                                </div>
+                            </div>
+                            <span asp-validation-for="MakeId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ModelId" class="control-label"></label>
+                            <div class="input-group">
+                                <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
+                                <div class="input-group-append">
+                                    <a href="~/Models/Create" class="btn btn-outline-secondary">+</a>
+                                </div>
+                            </div>
+                            <span asp-validation-for="ModelId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Trim" class="control-label"></label>
+                            <input asp-for="Trim" class="form-control" />
+                            <span asp-validation-for="Trim" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PurchaseDate" class="control-label"></label>
+                            <input asp-for="PurchaseDate" class="form-control" type="date" />
+                            <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PurchasePrice" class="control-label"></label>
+                            <input asp-for="PurchasePrice" class="form-control" />
+                            <span asp-validation-for="PurchasePrice" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <textarea asp-for="Description" class="form-control"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="AvailabilityDate" class="control-label"></label>
+                            <input asp-for="AvailabilityDate" class="form-control" type="date" />
+                            <span asp-validation-for="AvailabilityDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PhotoPath" class="control-label"></label>
+                            <input type="file" name="photo" class="form-control" />
+                            <span asp-validation-for="PhotoPath" class="text-danger"></span>
+                        </div>
+                    </fieldset>
                 </div>
-                <span asp-validation-for="MakeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ModelId" class="control-label"></label>
-                <div class="input-group">
-                    <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
-                    <div class="input-group-append">
-                        <a href="~/Models/Create" class="btn btn-outline-secondary">+</a>
-                    </div>
-                </div>
-                <span asp-validation-for="ModelId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Trim" class="control-label"></label>
-                <input asp-for="Trim" class="form-control" />
-                <span asp-validation-for="Trim" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PurchaseDate" class="control-label"></label>
-                <input asp-for="PurchaseDate" class="form-control" type="date" />
-                <span asp-validation-for="PurchaseDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PurchasePrice" class="control-label"></label>
-                <input asp-for="PurchasePrice" class="form-control" />
-                <span asp-validation-for="PurchasePrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AvailabilityDate" class="control-label"></label>
-                <input asp-for="AvailabilityDate" class="form-control" type="date" />
-                <span asp-validation-for="AvailabilityDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhotoPath" class="control-label"></label>
-                <input type="file" name="photo" class="form-control" />
-                <span asp-validation-for="PhotoPath" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IsAvailable" class="control-label">Statut</label>
-                <select asp-for="IsAvailable" class="form-control">
-                    <option value="true">Disponible</option>
-                    <option value="false">Non Disponible</option>
-                </select>
-            </div>
 
-            <!-- Section pour les réparations -->
-            <h4>Réparations</h4>
-            <div id="repairs-section">
-                <div class="form-group">
-                    <label for="new-repair-description">Description</label>
-                    <input type="text" class="form-control" id="new-repair-description" />
+                <!-- Deuxième colonne -->
+                <div class="col-lg-6">
+                    <!-- Section Réparations -->
+                    <fieldset class="p-3 mb-3" style="border: 1px solid #9282F5; background-color: #f8f9fa;">
+                        <legend class="w-auto">Réparations</legend>
+                        <div class="form-group">
+                            <label for="new-repair-description">Description</label>
+                            <input type="text" class="form-control" id="new-repair-description" />
+                        </div>
+                        <div class="form-group">
+                            <label for="new-repair-cost">Coût</label>
+                            <input type="number" class="form-control" id="new-repair-cost" />
+                        </div>
+                        <button type="button" class="btn btn-outline-secondary" id="add-repair">Ajouter réparation</button>
+                        <ul id="repairs-list" class="list-group mt-3"></ul>
+                    </fieldset>
+
+                    <!-- Section Statut -->
+                    <fieldset class="p-3 mb-3" style="border: 1px solid #9282F5; background-color: #f8f9fa;">
+                        <legend class="w-auto">Statut</legend>
+                        <div class="form-group">
+                            <label asp-for="Status" class="control-label">Statut</label>
+                            <select asp-for="Status" class="form-control" id="statusSelect">
+                                <option value="Disponible">Disponible</option>
+                                <option value="Non Disponible">Non Disponible</option>
+                                <option value="Vendu">Vendu</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="saleDateGroup" style="display: none;">
+                            <label asp-for="SaleDate" class="control-label">Date de vente</label>
+                            <input asp-for="SaleDate" class="form-control" type="date" />
+                            <span asp-validation-for="SaleDate" class="text-danger"></span>
+                        </div>
+                    </fieldset>
                 </div>
-                <div class="form-group">
-                    <label for="new-repair-cost">Coût</label>
-                    <input type="number" class="form-control" id="new-repair-cost" />
-                </div>
-                <button type="button" class="btn btn-secondary" id="add-repair">Ajouter réparation</button>
             </div>
-            <ul id="repairs-list" class="list-group mt-3"></ul>
 
             <div class="form-group mt-4">
-                <input type="submit" value="Créer" class="btn btn-primary" />
+                <input type="submit" value="Créer" class="btn btn-custom" />
             </div>
         </form>
     </div>
@@ -105,6 +127,21 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        function toggleSaleDate() {
+            var statusSelect = document.getElementById('statusSelect');
+            var saleDateGroup = document.getElementById('saleDateGroup');
+            if (statusSelect.value === 'Vendu') {
+                saleDateGroup.style.display = 'block';
+            } else {
+                saleDateGroup.style.display = 'none';
+            }
+        }
+
+        document.getElementById('statusSelect').addEventListener('change', toggleSaleDate);
+
+        // Initialize the visibility on page load
+        toggleSaleDate();
+
         document.getElementById('add-repair').addEventListener('click', function () {
             var description = document.getElementById('new-repair-description').value;
             var cost = document.getElementById('new-repair-cost').value;
@@ -115,7 +152,6 @@
                 repairItem.innerHTML = `${description}: ${cost} €`;
                 document.getElementById('repairs-list').appendChild(repairItem);
 
-                // Ajouter des champs cachés pour soumettre les réparations avec le formulaire
                 var hiddenDescription = document.createElement('input');
                 hiddenDescription.type = 'hidden';
                 hiddenDescription.name = 'RepairsDescriptions';
@@ -132,5 +168,34 @@
                 document.getElementById('new-repair-cost').value = '';
             }
         });
+
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('remove-repair')) {
+                e.target.closest('li').remove();
+            }
+        });
     </script>
 }
+
+<style>
+    .btn-custom {
+        background-color: #9282F5;
+        color: white;
+        border: none;
+    }
+
+        .btn-custom:hover {
+            background-color: #7a6fde;
+        }
+
+    fieldset {
+        background-color: #f8f9fa;
+        border: 1px solid #9282F5;
+    }
+
+    legend {
+        width: auto;
+        padding: 0 10px;
+        font-size: 1.2rem;
+    }
+</style>

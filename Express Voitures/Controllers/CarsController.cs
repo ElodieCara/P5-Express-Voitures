@@ -3,6 +3,7 @@ using ExpressVoitures.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 [Route("Cars")]
 public class CarsController : Controller
@@ -32,7 +33,8 @@ public class CarsController : Controller
             .Include(c => c.Make)
             .Include(c => c.Model)
             .Include(c => c.Repairs)
-            .Where(c => c.IsAvailable && !c.SaleDate.HasValue)
+            .OrderBy(c => c.PurchaseDate)
+            //.Where(c => c.IsAvailable && !c.SaleDate.HasValue)
             .ToListAsync();
         return View(availableCars);
     }
@@ -43,6 +45,7 @@ public class CarsController : Controller
         ViewBag.ModelId = new SelectList(_context.Models, "ModelId", "Name", car?.ModelId);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet("Create")]
     public IActionResult Create()
     {
@@ -50,6 +53,7 @@ public class CarsController : Controller
         return View();
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("Create")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,IsAvailable,Description,Status,SaleDate")] Car car, IFormFile photo, string[] RepairsDescriptions, decimal[] RepairsCosts)
@@ -96,7 +100,7 @@ public class CarsController : Controller
         return View(car);
     }
 
-
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet("Edit/{id}")]
     public async Task<IActionResult> Edit(int id)
     {
@@ -117,6 +121,7 @@ public class CarsController : Controller
         return View(car);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("Edit/{id}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, [Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,IsAvailable,Description,PhotoPath,Status,SaleDate")] Car car, IFormFile photo, string[] RepairsDescriptions, decimal[] RepairsCosts)
@@ -205,6 +210,7 @@ public class CarsController : Controller
     }
 
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpGet("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -225,6 +231,7 @@ public class CarsController : Controller
         return View(car);
     }
 
+    [Authorize(Policy = "AdminOnly")]
     [HttpPost("Delete/{id}"), ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)

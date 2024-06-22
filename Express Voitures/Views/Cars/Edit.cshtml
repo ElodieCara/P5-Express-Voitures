@@ -6,104 +6,100 @@
 
 <h1>Modifier une voiture</h1>
 
-<h4>Voiture</h4>
 <hr />
-<div class="row">
-    <div class="col-md-6">
+<div class="row justify-content-center">
+    <div class="col-md-8">
         <form asp-action="Edit" enctype="multipart/form-data" id="editForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="CarId" />
             <input type="hidden" asp-for="PhotoPath" />
-            <div class="form-group">
-                <label asp-for="VIN" class="control-label"></label>
-                <input asp-for="VIN" class="form-control" />
-                <span asp-validation-for="VIN" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Year" class="control-label"></label>
-                <input asp-for="Year" class="form-control" />
-                <span asp-validation-for="Year" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MakeId" class="control-label"></label>
-                <div class="input-group">
-                    <select asp-for="MakeId" class="form-control" asp-items="ViewBag.MakeId"></select>
-                    <div class="input-group-append">
-                        <a href="~/Makes/Create" class="btn btn-outline-secondary">+</a>
+
+            <!-- Section Informations Principales -->
+            <fieldset class="p-3 mb-3" style="border: 1px solid #9282F5; background-color: #f8f9fa;">
+                <legend class="w-auto">Informations Principales</legend>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="VIN" class="control-label"></label>
+                            <input asp-for="VIN" class="form-control" />
+                            <span asp-validation-for="VIN" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Year" class="control-label"></label>
+                            <input asp-for="Year" class="form-control" />
+                            <span asp-validation-for="Year" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="MakeId" class="control-label"></label>
+                            <div class="input-group">
+                                <select asp-for="MakeId" class="form-control" asp-items="ViewBag.MakeId"></select>
+                                <div class="input-group-append">
+                                    <a href="~/Makes/Create" class="btn btn-outline-secondary">+</a>
+                                </div>
+                            </div>
+                            <span asp-validation-for="MakeId" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="ModelId" class="control-label"></label>
+                            <div class="input-group">
+                                <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
+                                <div class="input-group-append">
+                                    <a href="~/Models/Create" class="btn btn-outline-secondary">+</a>
+                                </div>
+                            </div>
+                            <span asp-validation-for="ModelId" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="Trim" class="control-label"></label>
+                            <input asp-for="Trim" class="form-control" />
+                            <span asp-validation-for="Trim" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PurchaseDate" class="control-label"></label>
+                            <input asp-for="PurchaseDate" class="form-control" type="date" />
+                            <span asp-validation-for="PurchaseDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="PurchasePrice" class="control-label"></label>
+                            <input asp-for="PurchasePrice" class="form-control" />
+                            <span asp-validation-for="PurchasePrice" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <textarea asp-for="Description" class="form-control"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="AvailabilityDate" class="control-label"></label>
+                            <input asp-for="AvailabilityDate" class="form-control" type="date" />
+                            <span asp-validation-for="AvailabilityDate" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">Photo actuelle</label>
+                            @if (!string.IsNullOrEmpty(Model.PhotoPath))
+                            {
+                                <div class="mb-3">
+                                    <img src="@Model.PhotoPath" alt="Photo actuelle" class="img-thumbnail" style="max-width: 200px; max-height: 200px;" />
+                                </div>
+                            }
+                            <div class="form-group">
+                                <input type="file" name="photo" id="photoInput" style="display:none;">
+                                <label for="photoInput" class="btn btn-custom">Modifier la photo</label>
+                                <span id="fileName" style="margin-left: 10px;"></span>
+                            </div>
+                            <div class="form-group mt-3">
+                                <img id="newPhotoPreview" src="#" alt="Aperçu de la nouvelle photo" class="img-thumbnail" style="display:none; max-width: 200px; max-height: 200px;" />
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <span asp-validation-for="MakeId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ModelId" class="control-label"></label>
-                <div class="input-group">
-                    <select asp-for="ModelId" class="form-control" asp-items="ViewBag.ModelId"></select>
-                    <div class="input-group-append">
-                        <a href="~/Models/Create" class="btn btn-outline-secondary">+</a>
-                    </div>
-                </div>
-                <span asp-validation-for="ModelId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Trim" class="control-label"></label>
-                <input asp-for="Trim" class="form-control" />
-                <span asp-validation-for="Trim" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PurchaseDate" class="control-label"></label>
-                <input asp-for="PurchaseDate" class="form-control" type="date" />
-                <span asp-validation-for="PurchaseDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PurchasePrice" class="control-label"></label>
-                <input asp-for="PurchasePrice" class="form-control" />
-                <span asp-validation-for="PurchasePrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AvailabilityDate" class="control-label"></label>
-                <input asp-for="AvailabilityDate" class="form-control" type="date" />
-                <span asp-validation-for="AvailabilityDate" class="text-danger"></span>
-            </div>
+            </fieldset>
 
-            <div class="form-group">
-                <label class="control-label">Photo actuelle</label>
-                @if (!string.IsNullOrEmpty(Model.PhotoPath))
-                {
-                    <div class="mb-3">
-                        <img src="@Model.PhotoPath" alt="Photo actuelle" class="img-thumbnail" style="max-width: 200px; max-height: 200px;" />
-                    </div>
-                }
-                <div class="form-group">
-                    <input type="file" name="photo" id="photoInput" style="display:none;">
-                    <label for="photoInput" class="btn btn-custom">Modifier la photo</label>
-                    <span id="fileName" style="margin-left: 10px;"></span>
-                </div>
-                <div class="form-group mt-3">
-                    <img id="newPhotoPreview" src="#" alt="Aperçu de la nouvelle photo" class="img-thumbnail" style="display:none; max-width: 200px; max-height: 200px;" />
-                </div>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label">Statut</label>
-                <select asp-for="Status" class="form-control" id="statusSelect">
-                    <option value="Disponible">Disponible</option>
-                    <option value="Non Disponible">Non Disponible</option>
-                    <option value="Vendu">Vendu</option>
-                </select>
-            </div>
-
-            <div class="form-group" id="saleDateGroup" style="display: none;">
-                <label asp-for="SaleDate" class="control-label">Date de vente</label>
-                <input asp-for="SaleDate" class="form-control" type="date" />
-                <span asp-validation-for="SaleDate" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label class="control-label">Réparations</label>
+            <!-- Section Réparations -->
+            <fieldset class="p-3 mb-3" style="border: 1px solid #9282F5; background-color: #f8f9fa;">
+                <legend class="w-auto">Réparations</legend>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -130,9 +126,27 @@
                         <button type="button" id="add-repair" class="btn btn-outline-secondary">Ajouter</button>
                     </div>
                 </div>
-            </div>
+            </fieldset>
 
-            <div class="form-group">
+            <!-- Section Statut -->
+            <fieldset class="p-3 mb-3" style="border: 1px solid #9282F5; background-color: #f8f9fa;">
+                <legend class="w-auto">Statut</legend>
+                <div class="form-group">
+                    <label asp-for="Status" class="control-label">Statut</label>
+                    <select asp-for="Status" class="form-control" id="statusSelect">
+                        <option value="Disponible">Disponible</option>
+                        <option value="Non Disponible">Non Disponible</option>
+                        <option value="Vendu">Vendu</option>
+                    </select>
+                </div>
+                <div class="form-group" id="saleDateGroup" style="display: none;">
+                    <label asp-for="SaleDate" class="control-label">Date de vente</label>
+                    <input asp-for="SaleDate" class="form-control" type="date" />
+                    <span asp-validation-for="SaleDate" class="text-danger"></span>
+                </div>
+            </fieldset>
+
+            <div class="form-group mt-4">
                 <input type="submit" value="Modifier" class="btn btn-custom" />
             </div>
         </form>

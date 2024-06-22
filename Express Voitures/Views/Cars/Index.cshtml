@@ -45,7 +45,13 @@
                     <td>@Html.DisplayFor(modelItem => item.Description)</td>
                     <td>@item.AvailabilityDate.ToString("yyyy-MM-dd")</td>
                     <td>@(item.SalePrice.HasValue ? item.SalePrice.Value.ToString("N2") + " €" : "N/A")</td>
-                    <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status)
+                        @if (item.Status == "Vendu")
+                        {
+                            <div>le : @(item.SaleDate.HasValue ? item.SaleDate.Value.ToString("yyyy-MM-dd") : "N/A")</div>
+                        }
+                    </td>
                     <td>
                         @if (!string.IsNullOrEmpty(item.PhotoPath))
                         {
