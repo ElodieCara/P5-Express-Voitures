@@ -28,12 +28,13 @@ public class CarsController : Controller
     [HttpGet("Catalogue")]
     public async Task<IActionResult> Catalogue()
     {
-        var cars = await _context.Cars
+        var availableCars = await _context.Cars
             .Include(c => c.Make)
             .Include(c => c.Model)
             .Include(c => c.Repairs)
+            .Where(c => c.IsAvailable && !c.SaleDate.HasValue)
             .ToListAsync();
-        return View(cars);
+        return View(availableCars);
     }
 
     private void PopulateDropdowns(Car? car = null)
@@ -51,7 +52,7 @@ public class CarsController : Controller
 
     [HttpPost("Create")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,IsAvailable,Description,Status")] Car car, IFormFile photo, string[] RepairsDescriptions, decimal[] RepairsCosts)
+    public async Task<IActionResult> Create([Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,IsAvailable,Description,Status,SaleDate")] Car car, IFormFile photo, string[] RepairsDescriptions, decimal[] RepairsCosts)
     {
         if (ModelState.IsValid)
         {
@@ -84,7 +85,6 @@ public class CarsController : Controller
 
             await _context.SaveChangesAsync();
 
-            // Calculer et mettre à jour le prix de vente après l'ajout des réparations
             car.SalePrice = car.PurchasePrice + RepairsCosts.Sum() + 500;
             _context.Update(car);
             await _context.SaveChangesAsync();
@@ -95,6 +95,7 @@ public class CarsController : Controller
         PopulateDropdowns(car);
         return View(car);
     }
+
 
     [HttpGet("Edit/{id}")]
     public async Task<IActionResult> Edit(int id)
@@ -118,7 +119,7 @@ public class CarsController : Controller
 
     [HttpPost("Edit/{id}")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id, [Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,IsAvailable,Description,PhotoPath")] Car car, IFormFile photo, string[] RepairsDescriptions, decimal[] RepairsCosts)
+    public async Task<IActionResult> Edit(int id, [Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,IsAvailable,Description,PhotoPath,Status,SaleDate")] Car car, IFormFile photo, string[] RepairsDescriptions, decimal[] RepairsCosts)
     {
         if (id != car.CarId)
         {
@@ -185,10 +186,6 @@ public class CarsController : Controller
                 _context.Repairs.Add(newRepair);
             }
 
-            //// Calculer et mettre à jour le prix de vente après l'ajout des réparations
-            //car.SalePrice = car.CalculatedSalePrice;
-            //_context.Update(car);
-
             car.SalePrice = car.PurchasePrice + RepairsCosts.Sum() + 500;
             await _context.SaveChangesAsync();
         }
@@ -206,6 +203,7 @@ public class CarsController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
 
     [HttpGet("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)

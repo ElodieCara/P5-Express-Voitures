@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Edit" enctype="multipart/form-data">
+        <form asp-action="Edit" enctype="multipart/form-data" id="editForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="CarId" />
             <input type="hidden" asp-for="PhotoPath" />
@@ -69,6 +69,7 @@
                 <input asp-for="AvailabilityDate" class="form-control" type="date" />
                 <span asp-validation-for="AvailabilityDate" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label class="control-label">Photo actuelle</label>
                 @if (!string.IsNullOrEmpty(Model.PhotoPath))
@@ -88,14 +89,19 @@
             </div>
             <div class="form-group">
                 <label asp-for="Status" class="control-label">Statut</label>
-                <select asp-for="Status" class="form-control">
+                <select asp-for="Status" class="form-control" id="statusSelect">
                     <option value="Disponible">Disponible</option>
                     <option value="Non Disponible">Non Disponible</option>
                     <option value="Vendu">Vendu</option>
                 </select>
             </div>
 
-            <!-- Section for Repairs -->
+            <div class="form-group" id="saleDateGroup" style="display: none;">
+                <label asp-for="SaleDate" class="control-label">Date de vente</label>
+                <input asp-for="SaleDate" class="form-control" type="date" />
+                <span asp-validation-for="SaleDate" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <label class="control-label">Réparations</label>
                 <table class="table table-bordered">
@@ -140,6 +146,21 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
+        function toggleSaleDate() {
+            var statusSelect = document.getElementById('statusSelect');
+            var saleDateGroup = document.getElementById('saleDateGroup');
+            if (statusSelect.value === 'Vendu') {
+                saleDateGroup.style.display = 'block';
+            } else {
+                saleDateGroup.style.display = 'none';
+            }
+        }
+
+        document.getElementById('statusSelect').addEventListener('change', toggleSaleDate);
+
+        // Initialize the visibility on page load
+        toggleSaleDate();
+
         document.getElementById('photoInput').addEventListener('change', function (e) {
             var reader = new FileReader();
             reader.onload = function (e) {
@@ -149,7 +170,6 @@
             }
             reader.readAsDataURL(this.files[0]);
 
-            // Mise à jour du texte du label et affichage du nom du fichier
             var fileNameSpan = document.getElementById('fileName');
             fileNameSpan.textContent = this.files[0].name;
         });
@@ -177,6 +197,16 @@
             if (e.target && e.target.classList.contains('remove-repair')) {
                 e.target.closest('tr').remove();
             }
+        });
+
+        document.getElementById('editForm').addEventListener('submit', function () {
+            var statusElement = document.querySelector('[name="Status"]');
+            var statusValue = statusElement.value;
+            var hiddenStatusInput = document.createElement('input');
+            hiddenStatusInput.type = 'hidden';
+            hiddenStatusInput.name = 'Status';
+            hiddenStatusInput.value = statusValue;
+            this.appendChild(hiddenStatusInput);
         });
     </script>
 }

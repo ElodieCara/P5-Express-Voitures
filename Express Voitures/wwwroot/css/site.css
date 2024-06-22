@@ -23,13 +23,76 @@ body {
 */
 /*  Helper Styles */
 body {
-    font-family: Varela Round;
+    font-family: 'Kosugi Maru', sans-serif;
     background: #f1f1f1;
 }
 
 a {
     text-decoration: none;
 }
+
+/* Navbar Styles */
+
+.navbar-brand {
+    font-family: 'Kosugi Maru', sans-serif;
+    font-size: 30px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.navbar-nav .nav-item .nav-link.active {
+    color: #9282F5 !important;
+}
+
+.nav-link.active {
+    color: #9282F5 !important;
+}
+
+.nav-link:hover {
+    color: #9282F5 !important;
+}
+
+.navbar-collapse {
+    justify-content: center;
+}
+
+
+/* Btn Login */
+
+/* Style pour le bouton Login */
+.btn-login {
+    background-color: transparent;
+    color: #9282F5;
+    border: 2px solid #9282F5;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .btn-login:hover {
+        background-color: #9282F5;
+        color: white;
+    }
+
+/* Style pour le bouton Logout */
+.btn-logout {
+    background-color: #9282F5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+    .btn-logout:hover {
+        background-color: #7a6fde;
+    }
+
+
 
 /* Card Styles */
 

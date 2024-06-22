@@ -97,7 +97,7 @@ namespace ExpressVoitures.Models
                 else if (value == "Vendu")
                 {
                     IsAvailable = false;
-                    SaleDate = DateTime.Now;
+                    SaleDate = SaleDate ?? DateTime.Now;
                 }
                 else if (value == "Non Disponible")
                 {
@@ -121,6 +121,6 @@ namespace ExpressVoitures.Models
 
         [NotMapped]
         [Display(Name = "Coût total des réparations")]
-        public decimal TotalRepairCost => Repairs.Sum(r => r.Cost);       
+        public decimal TotalRepairCost => Repairs.Sum(r => r.Cost);
     }
 }

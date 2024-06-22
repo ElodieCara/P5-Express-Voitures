@@ -24,7 +24,7 @@
                 <th>@Html.DisplayNameFor(model => model.Description)</th>
                 <th>@Html.DisplayNameFor(model => model.AvailabilityDate)</th>
                 <th>@Html.DisplayNameFor(model => model.SalePrice)</th>
-                <th>@Html.DisplayNameFor(model => model.IsAvailable)</th>
+                <th>@Html.DisplayNameFor(model => model.Status)</th>
                 <th>@Html.DisplayNameFor(model => model.PhotoPath)</th>
                 <th>@Html.DisplayNameFor(model => model.RepairDescriptions)</th>
                 <th>@Html.DisplayNameFor(model => model.TotalRepairCost)</th>
@@ -56,7 +56,7 @@
                     <td>@item.TotalRepairCost.ToString("N2") €</td>
                     <td class="d-flex flex-column align-items-center">
                         <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-primary btn-sm mb-2">Modifier</a>
-                        <form asp-action="Delete" asp-route-id="@item.CarId" method="post" class="d-inline">
+                        <form asp-action="Delete" asp-route-id="@item.CarId" method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette voiture ?');">
                             <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
                         </form>
                     </td>
