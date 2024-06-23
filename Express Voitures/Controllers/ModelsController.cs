@@ -48,23 +48,32 @@ namespace Express_Voitures.Controllers
         // GET: Models/Create
         public IActionResult Create()
         {
+            Console.WriteLine("GET Create method called");
             ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name");
             return View();
         }
 
         // POST: Models/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ModelId,MakeId,Name")] Model model)
         {
-            if (ModelState.IsValid)
+            Console.WriteLine("POST Create method called");
+
+            try
             {
                 _context.Add(model);
                 await _context.SaveChangesAsync();
+                Console.WriteLine("Model saved successfully");
                 return RedirectToAction(nameof(Index));
             }
+            catch (DbUpdateException ex)
+            {
+                ModelState.AddModelError("", "Unable to save changes. " +
+                    "Try again, and if the problem persists " +
+                    "see your system administrator.");
+            }
+
             ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name", model.MakeId);
             return View(model);
         }
@@ -87,8 +96,6 @@ namespace Express_Voitures.Controllers
         }
 
         // POST: Models/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ModelId,MakeId,Name")] Model model)

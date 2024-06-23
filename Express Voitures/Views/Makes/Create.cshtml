@@ -18,14 +18,15 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-custom" />
             </div>
-        </form>
+        </form>       
     </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Cars" asp-action="Create">Retour</a> |
+    <a asp-action="Index">Voir la liste</a>
 </div>
 
 @section Scripts {

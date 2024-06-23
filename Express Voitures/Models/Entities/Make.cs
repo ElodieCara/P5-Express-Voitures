@@ -13,7 +13,7 @@ namespace ExpressVoitures.Models
         public required string Name { get; set; }
 
         // Navigation property
-        public required ICollection<Model> Models { get; set; }
+        public ICollection<Model> Models { get; set; } = new List<Model>();
 
         // Ajout de cette ligne pour que la relation avec Car soit bidirectionnelle
         public ICollection<Car> Cars { get; set; } = new List<Car>();

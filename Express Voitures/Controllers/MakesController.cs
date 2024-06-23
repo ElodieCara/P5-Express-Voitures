@@ -58,9 +58,25 @@ namespace Express_Voitures.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(make);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(make);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, $"An error occurred while saving the make: {ex.Message}");
+                }
+            }
+            else
+            {
+                // Display the validation errors
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.ErrorMessage);
+                }
             }
             return View(make);
         }

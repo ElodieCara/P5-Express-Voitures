@@ -182,3 +182,26 @@ a {
         box-shadow: 0 0 0 0 rgba(90, 153, 212, 0);
     }
 }
+
+/* btn */
+
+.btn-custom {
+    background-color: #9282F5;
+    color: white;
+    border: none;
+}
+
+    .btn-custom:hover {
+        background-color: #7a6fde;
+    }
+
+fieldset {
+    background-color: #f8f9fa;
+    border: 1px solid #9282F5;
+}
+
+legend {
+    width: auto;
+    padding: 0 10px;
+    font-size: 1.2rem;
+}

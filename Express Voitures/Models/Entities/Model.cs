@@ -7,6 +7,7 @@ namespace ExpressVoitures.Models
     public class Model
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ModelId { get; set; }
 
         [Required]
@@ -14,11 +15,11 @@ namespace ExpressVoitures.Models
 
         [Required]
         [StringLength(100)]
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
         // Navigation properties
         [ForeignKey("MakeId")]
-        public required Make Make { get; set; }
+        public Make Make { get; set; }
         public ICollection<Car> Cars { get; set; } = new List<Car>();
     }
 }
