@@ -28,8 +28,10 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
 });
 
-// Ajout du service pour la gestion des voitures
+// Enregistrement des services
 builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IMakeService, MakeService>();
+builder.Services.AddScoped<IModelService, ModelService>(); // Enregistrement du service IModelService
 
 var app = builder.Build();
 

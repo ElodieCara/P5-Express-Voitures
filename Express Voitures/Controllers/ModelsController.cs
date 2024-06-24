@@ -1,29 +1,27 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ExpressVoitures.Data;
 using ExpressVoitures.Models;
+using ExpressVoitures.Services;
+using Microsoft.EntityFrameworkCore;
 
-namespace Express_Voitures.Controllers
+namespace ExpressVoitures.Controllers
 {
     public class ModelsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IModelService _modelService;
+        private readonly IMakeService _makeService;
 
-        public ModelsController(ApplicationDbContext context)
+        public ModelsController(IModelService modelService, IMakeService makeService)
         {
-            _context = context;
+            _modelService = modelService;
+            _makeService = makeService;
         }
 
         // GET: Models
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Models.Include(m => m.Make);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _modelService.GetAllModelsAsync());
         }
 
         // GET: Models/Details/5
@@ -34,9 +32,7 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var model = await _context.Models
-                .Include(m => m.Make)
-                .FirstOrDefaultAsync(m => m.ModelId == id);
+            var model = await _modelService.GetModelByIdAsync(id.Value);
             if (model == null)
             {
                 return NotFound();
@@ -46,10 +42,9 @@ namespace Express_Voitures.Controllers
         }
 
         // GET: Models/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            Console.WriteLine("GET Create method called");
-            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name");
+            ViewData["MakeId"] = new SelectList(await _makeService.GetAllMakesAsync(), "MakeId", "Name");
             return View();
         }
 
@@ -58,23 +53,20 @@ namespace Express_Voitures.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ModelId,MakeId,Name")] Model model)
         {
-            Console.WriteLine("POST Create method called");
-
-            try
+            if (ModelState.IsValid)
             {
-                _context.Add(model);
-                await _context.SaveChangesAsync();
-                Console.WriteLine("Model saved successfully");
-                return RedirectToAction(nameof(Index));
-            }
-            catch (DbUpdateException ex)
-            {
-                ModelState.AddModelError("", "Unable to save changes. " +
-                    "Try again, and if the problem persists " +
-                    "see your system administrator.");
+                try
+                {
+                    await _modelService.AddModelAsync(model);
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, $"An error occurred while saving the model: {ex.Message}");
+                }
             }
 
-            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name", model.MakeId);
+            ViewData["MakeId"] = new SelectList(await _makeService.GetAllMakesAsync(), "MakeId", "Name", model.MakeId);
             return View(model);
         }
 
@@ -86,12 +78,13 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var model = await _context.Models.FindAsync(id);
+            var model = await _modelService.GetModelByIdAsync(id.Value);
             if (model == null)
             {
                 return NotFound();
             }
-            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name", model.MakeId);
+
+            ViewData["MakeId"] = new SelectList(await _makeService.GetAllMakesAsync(), "MakeId", "Name", model.MakeId);
             return View(model);
         }
 
@@ -109,12 +102,11 @@ namespace Express_Voitures.Controllers
             {
                 try
                 {
-                    _context.Update(model);
-                    await _context.SaveChangesAsync();
+                    await _modelService.UpdateModelAsync(model);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ModelExists(model.ModelId))
+                    if (!_modelService.ModelExists(model.ModelId))
                     {
                         return NotFound();
                     }
@@ -125,7 +117,8 @@ namespace Express_Voitures.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MakeId"] = new SelectList(_context.Makes, "MakeId", "Name", model.MakeId);
+
+            ViewData["MakeId"] = new SelectList(await _makeService.GetAllMakesAsync(), "MakeId", "Name", model.MakeId);
             return View(model);
         }
 
@@ -137,9 +130,7 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var model = await _context.Models
-                .Include(m => m.Make)
-                .FirstOrDefaultAsync(m => m.ModelId == id);
+            var model = await _modelService.GetModelByIdAsync(id.Value);
             if (model == null)
             {
                 return NotFound();
@@ -153,19 +144,8 @@ namespace Express_Voitures.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var model = await _context.Models.FindAsync(id);
-            if (model != null)
-            {
-                _context.Models.Remove(model);
-            }
-
-            await _context.SaveChangesAsync();
+            await _modelService.DeleteModelAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ModelExists(int id)
-        {
-            return _context.Models.Any(e => e.ModelId == id);
         }
     }
 }

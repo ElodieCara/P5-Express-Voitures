@@ -15,11 +15,11 @@ namespace ExpressVoitures.Models
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         // Navigation properties
         [ForeignKey("MakeId")]
-        public Make Make { get; set; }
+        public Make? Make { get; set; }
         public ICollection<Car> Cars { get; set; } = new List<Car>();
     }
 }

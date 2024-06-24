@@ -1,28 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ExpressVoitures.Data;
 using ExpressVoitures.Models;
+using ExpressVoitures.Services;
+using Microsoft.EntityFrameworkCore;
 
-namespace Express_Voitures.Controllers
+namespace ExpressVoitures.Controllers
 {
     public class MakesController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IMakeService _makeService;
 
-        public MakesController(ApplicationDbContext context)
+        public MakesController(IMakeService makeService)
         {
-            _context = context;
+            _makeService = makeService;
         }
 
         // GET: Makes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Makes.ToListAsync());
+            return View(await _makeService.GetAllMakesAsync());
         }
 
         // GET: Makes/Details/5
@@ -33,8 +30,7 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var make = await _context.Makes
-                .FirstOrDefaultAsync(m => m.MakeId == id);
+            var make = await _makeService.GetMakeByIdAsync(id.Value);
             if (make == null)
             {
                 return NotFound();
@@ -50,8 +46,6 @@ namespace Express_Voitures.Controllers
         }
 
         // POST: Makes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MakeId,Name")] Make make)
@@ -60,22 +54,12 @@ namespace Express_Voitures.Controllers
             {
                 try
                 {
-                    _context.Add(make);
-                    await _context.SaveChangesAsync();
+                    await _makeService.AddMakeAsync(make);
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
                     ModelState.AddModelError(string.Empty, $"An error occurred while saving the make: {ex.Message}");
-                }
-            }
-            else
-            {
-                // Display the validation errors
-                var errors = ModelState.Values.SelectMany(v => v.Errors);
-                foreach (var error in errors)
-                {
-                    ModelState.AddModelError(string.Empty, error.ErrorMessage);
                 }
             }
             return View(make);
@@ -89,7 +73,7 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var make = await _context.Makes.FindAsync(id);
+            var make = await _makeService.GetMakeByIdAsync(id.Value);
             if (make == null)
             {
                 return NotFound();
@@ -98,8 +82,6 @@ namespace Express_Voitures.Controllers
         }
 
         // POST: Makes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MakeId,Name")] Make make)
@@ -113,12 +95,11 @@ namespace Express_Voitures.Controllers
             {
                 try
                 {
-                    _context.Update(make);
-                    await _context.SaveChangesAsync();
+                    await _makeService.UpdateMakeAsync(make);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MakeExists(make.MakeId))
+                    if (!_makeService.MakeExists(make.MakeId))
                     {
                         return NotFound();
                     }
@@ -140,8 +121,7 @@ namespace Express_Voitures.Controllers
                 return NotFound();
             }
 
-            var make = await _context.Makes
-                .FirstOrDefaultAsync(m => m.MakeId == id);
+            var make = await _makeService.GetMakeByIdAsync(id.Value);
             if (make == null)
             {
                 return NotFound();
@@ -155,19 +135,8 @@ namespace Express_Voitures.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var make = await _context.Makes.FindAsync(id);
-            if (make != null)
-            {
-                _context.Makes.Remove(make);
-            }
-
-            await _context.SaveChangesAsync();
+            await _makeService.DeleteMakeAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool MakeExists(int id)
-        {
-            return _context.Makes.Any(e => e.MakeId == id);
         }
     }
 }
