@@ -1,52 +1,48 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ExpressVoitures.Data;
 using ExpressVoitures.Models;
+using ExpressVoitures.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace ExpressVoitures.Controllers
 {
     public class RepairsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRepairService _repairService;
+        private readonly ICarService _carService;
 
-        public RepairsController(ApplicationDbContext context)
+        public RepairsController(IRepairService repairService, ICarService carService)
         {
-            _context = context;
+            _repairService = repairService;
+            _carService = carService;
         }
 
         // GET: Repairs
         public async Task<IActionResult> Index()
         {
-            var repairs = await _context.Repairs
-                .Include(r => r.Car)
-                .ThenInclude(c => c.Make)
-                .Include(r => r.Car)
-                .ThenInclude(c => c.Model)
-                .ToListAsync();
+            var repairs = await _repairService.GetAllRepairsAsync();
             return View(repairs);
         }
 
         // GET: Repairs/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CarId"] = new SelectList(_context.Cars.Include(c => c.Make).Include(c => c.Model), "CarId", "VIN");
+            ViewData["CarId"] = new SelectList(await _carService.GetAllCarsAsync(), "CarId", "VIN");
             return View();
         }
 
         // POST: Repairs/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RepairId,CarId,Description,Cost")] Repair repair)
+        public async Task<IActionResult> Create([Bind("RepairId,CarId,RepairDescription,Cost")] Repair repair)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(repair);
-                await _context.SaveChangesAsync();
+                await _repairService.AddRepairAsync(repair);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CarId"] = new SelectList(_context.Cars.Include(c => c.Make).Include(c => c.Model), "CarId", "VIN", repair.CarId);
+            ViewData["CarId"] = new SelectList(await _carService.GetAllCarsAsync(), "CarId", "VIN", repair.CarId);
             return View(repair);
         }
 
@@ -58,19 +54,19 @@ namespace ExpressVoitures.Controllers
                 return NotFound();
             }
 
-            var repair = await _context.Repairs.FindAsync(id);
+            var repair = await _repairService.GetRepairByIdAsync(id.Value);
             if (repair == null)
             {
                 return NotFound();
             }
-            ViewData["CarId"] = new SelectList(_context.Cars.Include(c => c.Make).Include(c => c.Model), "CarId", "VIN", repair.CarId);
+            ViewData["CarId"] = new SelectList(await _carService.GetAllCarsAsync(), "CarId", "VIN", repair.CarId);
             return View(repair);
         }
 
         // POST: Repairs/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RepairId,CarId,Description,Cost")] Repair repair)
+        public async Task<IActionResult> Edit(int id, [Bind("RepairId,CarId,RepairDescription,Cost")] Repair repair)
         {
             if (id != repair.RepairId)
             {
@@ -81,12 +77,11 @@ namespace ExpressVoitures.Controllers
             {
                 try
                 {
-                    _context.Update(repair);
-                    await _context.SaveChangesAsync();
+                    await _repairService.UpdateRepairAsync(repair);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RepairExists(repair.RepairId))
+                    if (!await _repairService.RepairExistsAsync(repair.RepairId))
                     {
                         return NotFound();
                     }
@@ -97,13 +92,13 @@ namespace ExpressVoitures.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CarId"] = new SelectList(_context.Cars.Include(c => c.Make).Include(c => c.Model), "CarId", "VIN", repair.CarId);
+            ViewData["CarId"] = new SelectList(await _carService.GetAllCarsAsync(), "CarId", "VIN", repair.CarId);
             return View(repair);
         }
 
-        private bool RepairExists(int id)
+        private async Task<bool> RepairExists(int id)
         {
-            return _context.Repairs.Any(e => e.RepairId == id);
+            return await _repairService.RepairExistsAsync(id);
         }
     }
 }

@@ -9,10 +9,10 @@ namespace ExpressVoitures.Models
         public int RepairId { get; set; }
 
         [Required]
-        public int CarId { get; set; } 
+        public int CarId { get; set; }
 
         [ForeignKey("CarId")]
-        public Car? Car { get; set; } 
+        public Car? Car { get; set; }
 
         [Required]
         [StringLength(1000)]

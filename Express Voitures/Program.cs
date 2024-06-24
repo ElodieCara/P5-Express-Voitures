@@ -30,8 +30,12 @@ builder.Services.AddAuthorization(options =>
 
 // Enregistrement des services
 builder.Services.AddScoped<ICarService, CarService>();
+builder.Services.AddScoped<IRepairService, RepairService>();
 builder.Services.AddScoped<IMakeService, MakeService>();
-builder.Services.AddScoped<IModelService, ModelService>(); // Enregistrement du service IModelService
+builder.Services.AddScoped<IModelService, ModelService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+
+
 
 var app = builder.Build();
 
