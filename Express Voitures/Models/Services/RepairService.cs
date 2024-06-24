@@ -1,50 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using ExpressVoitures.Models;
+using ExpressVoitures.Repositories;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using ExpressVoitures.Data;
-using ExpressVoitures.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace ExpressVoitures.Services
 {
     public class RepairService : IRepairService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IRepairRepository _repairRepository;
 
-        public RepairService(ApplicationDbContext context)
+        public RepairService(IRepairRepository repairRepository)
         {
-            _context = context;
+            _repairRepository = repairRepository;
         }
 
         public async Task<IEnumerable<Repair>> GetAllRepairsAsync()
         {
-            return await _context.Repairs
-                .Include(r => r.Car)
-                .ThenInclude(c => c.Make)
-                .Include(r => r.Car)
-                .ThenInclude(c => c.Model)
-                .ToListAsync();
+            return await _repairRepository.GetAllAsync();
         }
 
-        public async Task<Repair> GetRepairByIdAsync(int id)
+        public async Task<Repair?> GetRepairByIdAsync(int id)
         {
-            return await _context.Repairs.FindAsync(id);
+            return await _repairRepository.GetByIdAsync(id);
         }
 
         public async Task AddRepairAsync(Repair repair)
         {
-            _context.Repairs.Add(repair);
-            await _context.SaveChangesAsync();
+            await _repairRepository.AddAsync(repair);
         }
 
         public async Task UpdateRepairAsync(Repair repair)
         {
-            _context.Entry(repair).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _repairRepository.UpdateAsync(repair);
+        }
+
+        public async Task DeleteRepairAsync(int id)
+        {
+            var repair = await _repairRepository.GetByIdAsync(id);
+            if (repair != null)
+            {
+                await _repairRepository.DeleteAsync(id);
+            }
         }
 
         public async Task<bool> RepairExistsAsync(int id)
         {
-            return await _context.Repairs.AnyAsync(e => e.RepairId == id);
+            return await _repairRepository.RepairExistsAsync(id);
         }
     }
 }

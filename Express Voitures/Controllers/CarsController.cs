@@ -1,22 +1,23 @@
-﻿using ExpressVoitures.Models;
-using ExpressVoitures.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using ExpressVoitures.Data;
+using ExpressVoitures.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Authorization;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using ExpressVoitures.Services;
 
 [Route("Cars")]
 public class CarsController : Controller
 {
     private readonly ICarService _carService;
+    private readonly IMakeService _makeService;
+    private readonly IModelService _modelService;
 
-    public CarsController(ICarService carService)
+    public CarsController(ICarService carService, IMakeService makeService, IModelService modelService)
     {
         _carService = carService;
+        _makeService = makeService;
+        _modelService = modelService;
     }
 
     [HttpGet("")]
@@ -30,21 +31,20 @@ public class CarsController : Controller
     public async Task<IActionResult> Catalogue()
     {
         var availableCars = await _carService.GetAllCarsAsync();
-        availableCars = availableCars.OrderBy(c => c.PurchaseDate).ToList();
         return View(availableCars);
     }
 
-    private void PopulateDropdowns(Car? car = null)
+    private async Task PopulateDropdowns(Car? car = null)
     {
-        ViewBag.MakeId = new SelectList(_carService.GetMakes(), "MakeId", "Name", car?.MakeId);
-        ViewBag.ModelId = new SelectList(_carService.GetModels(), "ModelId", "Name", car?.ModelId);
+        ViewBag.MakeId = new SelectList(await _makeService.GetAllMakesAsync(), "MakeId", "Name", car?.MakeId);
+        ViewBag.ModelId = new SelectList(await _modelService.GetAllModelsAsync(), "ModelId", "Name", car?.ModelId);
     }
 
     [Authorize(Policy = "AdminOnly")]
     [HttpGet("Create")]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
-        PopulateDropdowns();
+        await PopulateDropdowns();
         return View();
     }
 
@@ -78,7 +78,7 @@ public class CarsController : Controller
                     RepairDescription = RepairsDescriptions[i],
                     Cost = RepairsCosts[i]
                 };
-                await _carService.AddRepairAsync(newRepair);
+                await _carService.AddRepairAsync(car.CarId, newRepair);
             }
 
             car.SalePrice = car.PurchasePrice + RepairsCosts.Sum() + 500;
@@ -87,7 +87,7 @@ public class CarsController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        PopulateDropdowns(car);
+        await PopulateDropdowns(car);
         return View(car);
     }
 
@@ -106,7 +106,7 @@ public class CarsController : Controller
             return NotFound();
         }
 
-        PopulateDropdowns(car);
+        await PopulateDropdowns(car);
         return View(car);
     }
 
@@ -124,7 +124,7 @@ public class CarsController : Controller
 
         if (!ModelState.IsValid)
         {
-            PopulateDropdowns(car);
+            await PopulateDropdowns(car);
             return View(car);
         }
 
@@ -154,29 +154,28 @@ public class CarsController : Controller
             else
             {
                 // Conserver le chemin de la photo existante
-                _carService.SetPhotoPathUnmodified(car);
+                // Assurez-vous que ce champ n'est pas marqué comme modifié si aucune nouvelle photo n'est téléchargée
             }
 
             // Mise à jour de la voiture
             await _carService.UpdateCarAsync(car);
 
             // Supprimer les réparations existantes pour ajouter les nouvelles
-            var existingRepairs = await _carService.GetRepairsByCarIdAsync(car.CarId);
-            foreach (var repair in existingRepairs)
+            var existingCar = await _carService.GetCarByIdAsync(car.CarId);
+            if (existingCar != null)
             {
-                await _carService.RemoveRepairAsync(repair);
-            }
+                existingCar.Repairs.Clear();
 
-            // Ajouter les nouvelles réparations
-            for (int i = 0; i < RepairsDescriptions.Length; i++)
-            {
-                var newRepair = new Repair
+                for (int i = 0; i < RepairsDescriptions.Length; i++)
                 {
-                    CarId = car.CarId,
-                    RepairDescription = RepairsDescriptions[i],
-                    Cost = RepairsCosts[i]
-                };
-                await _carService.AddRepairAsync(newRepair);
+                    var newRepair = new Repair
+                    {
+                        CarId = car.CarId,
+                        RepairDescription = RepairsDescriptions[i],
+                        Cost = RepairsCosts[i]
+                    };
+                    await _carService.AddRepairAsync(car.CarId, newRepair);
+                }
             }
 
             car.SalePrice = car.PurchasePrice + RepairsCosts.Sum() + 500;
@@ -184,7 +183,7 @@ public class CarsController : Controller
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!_carService.CarExists(car.CarId))
+            if (!await _carService.CarExistsAsync(car.CarId))
             {
                 return NotFound();
             }
@@ -220,12 +219,13 @@ public class CarsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
+        var car = await _carService.GetCarByIdAsync(id);
+        if (car == null)
+        {
+            return NotFound();
+        }
+
         await _carService.DeleteCarAsync(id);
         return RedirectToAction(nameof(Index));
-    }
-
-    private bool CarExists(int id)
-    {
-        return _carService.CarExists(id);
     }
 }

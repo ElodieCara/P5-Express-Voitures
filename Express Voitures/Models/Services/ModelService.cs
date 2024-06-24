@@ -1,56 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using ExpressVoitures.Models;
+using ExpressVoitures.Repositories;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using ExpressVoitures.Data;
-using ExpressVoitures.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace ExpressVoitures.Services
 {
     public class ModelService : IModelService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IModelRepository _modelRepository;
 
-        public ModelService(ApplicationDbContext context)
+        public ModelService(IModelRepository modelRepository)
         {
-            _context = context;
+            _modelRepository = modelRepository;
         }
 
-        public async Task<List<Model>> GetAllModelsAsync()
+        public async Task<IEnumerable<Model>> GetAllModelsAsync()
         {
-            return await _context.Models.Include(m => m.Make).ToListAsync();
+            return await _modelRepository.GetAllAsync();
         }
 
-        public async Task<Model> GetModelByIdAsync(int id)
+        public async Task<Model?> GetModelByIdAsync(int id)
         {
-            var model = await _context.Models.Include(m => m.Make).FirstOrDefaultAsync(m => m.ModelId == id);
-            return model ?? throw new InvalidOperationException("Model not found");
+            return await _modelRepository.GetByIdAsync(id);
         }
 
         public async Task AddModelAsync(Model model)
         {
-            _context.Models.Add(model);
-            await _context.SaveChangesAsync();
+            await _modelRepository.AddAsync(model);
         }
 
         public async Task UpdateModelAsync(Model model)
         {
-            _context.Entry(model).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _modelRepository.UpdateAsync(model);
         }
 
         public async Task DeleteModelAsync(int id)
         {
-            var model = await _context.Models.FindAsync(id);
+            var model = await _modelRepository.GetByIdAsync(id);
             if (model != null)
             {
-                _context.Models.Remove(model);
-                await _context.SaveChangesAsync();
+                await _modelRepository.DeleteAsync(id);
             }
         }
 
-        public bool ModelExists(int id)
+        public async Task<bool> ModelExistsAsync(int id)
         {
-            return _context.Models.Any(e => e.ModelId == id);
+            return await _modelRepository.ModelExistsAsync(id);
         }
     }
 }

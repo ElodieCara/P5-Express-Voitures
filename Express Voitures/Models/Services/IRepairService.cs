@@ -7,7 +7,7 @@ namespace ExpressVoitures.Services
     public interface IRepairService
     {
         Task<IEnumerable<Repair>> GetAllRepairsAsync();
-        Task<Repair> GetRepairByIdAsync(int id);
+        Task<Repair?> GetRepairByIdAsync(int id);
         Task AddRepairAsync(Repair repair);
         Task UpdateRepairAsync(Repair repair);
         Task<bool> RepairExistsAsync(int id);

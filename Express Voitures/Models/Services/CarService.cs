@@ -1,94 +1,63 @@
-﻿using ExpressVoitures.Data;
-using ExpressVoitures.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using ExpressVoitures.Models;
+using ExpressVoitures.Repositories;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace ExpressVoitures.Services
 {
     public class CarService : ICarService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ICarRepository _carRepository;
+        private readonly IRepairRepository _repairRepository; // Ajout du repository des réparations
 
-        public CarService(ApplicationDbContext context)
+        public CarService(ICarRepository carRepository, IRepairRepository repairRepository)
         {
-            _context = context;
+            _carRepository = carRepository;
+            _repairRepository = repairRepository;
         }
 
-        public async Task<List<Car>> GetAllCarsAsync()
+        public async Task<IEnumerable<Car>> GetAllCarsAsync()
         {
-            return await _context.Cars
-                .Include(c => c.Make)
-                .Include(c => c.Model)
-                .Include(c => c.Repairs)
-                .ToListAsync();
+            return await _carRepository.GetAllAsync();
         }
 
         public async Task<Car?> GetCarByIdAsync(int id)
         {
-            return await _context.Cars
-                .Include(c => c.Repairs)
-                .FirstOrDefaultAsync(c => c.CarId == id);
+            return await _carRepository.GetByIdAsync(id);
         }
 
         public async Task AddCarAsync(Car car)
         {
-            _context.Cars.Add(car);
-            await _context.SaveChangesAsync();
+            await _carRepository.AddAsync(car);
         }
 
         public async Task UpdateCarAsync(Car car)
         {
-            _context.Cars.Update(car);
-            await _context.SaveChangesAsync();
+            await _carRepository.UpdateAsync(car);
         }
 
         public async Task DeleteCarAsync(int id)
         {
-            var car = await _context.Cars.FindAsync(id);
+            var car = await _carRepository.GetByIdAsync(id);
             if (car != null)
             {
-                _context.Cars.Remove(car);
-                await _context.SaveChangesAsync();
+                await _carRepository.DeleteAsync(id);
             }
         }
 
-        public bool CarExists(int id)
+        public async Task<bool> CarExistsAsync(int id)
         {
-            return _context.Cars.Any(e => e.CarId == id);
+            return await _carRepository.CarExistsAsync(id);
         }
 
-        public IEnumerable<Make> GetMakes()
+        public async Task AddRepairAsync(int carId, Repair repair) // Implémentation de la méthode
         {
-            return _context.Makes.ToList();
-        }
-
-        public IEnumerable<Model> GetModels()
-        {
-            return _context.Models.ToList();
-        }
-
-        public async Task AddRepairAsync(Repair repair)
-        {
-            _context.Repairs.Add(repair);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task RemoveRepairAsync(Repair repair)
-        {
-            _context.Repairs.Remove(repair);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task<List<Repair>> GetRepairsByCarIdAsync(int carId)
-        {
-            return await _context.Repairs.Where(r => r.CarId == carId).ToListAsync();
-        }
-
-        public void SetPhotoPathUnmodified(Car car)
-        {
-            _context.Entry(car).Property(x => x.PhotoPath).IsModified = false;
+            var car = await _carRepository.GetByIdAsync(carId);
+            if (car != null)
+            {
+                car.Repairs.Add(repair);
+                await _carRepository.UpdateAsync(car);
+            }
         }
     }
 }

@@ -5,6 +5,7 @@ using ExpressVoitures.Models;
 using ExpressVoitures.Services;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
+using ExpressVoitures.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,11 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
 });
+
+builder.Services.AddScoped<ICarRepository, CarRepository>();
+builder.Services.AddScoped<IMakeRepository, MakeRepository>();
+builder.Services.AddScoped<IModelRepository, ModelRepository>();
+builder.Services.AddScoped<IRepairRepository, RepairRepository>();
 
 // Enregistrement des services
 builder.Services.AddScoped<ICarService, CarService>();

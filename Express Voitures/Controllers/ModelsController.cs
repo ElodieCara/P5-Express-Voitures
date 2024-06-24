@@ -106,7 +106,7 @@ namespace ExpressVoitures.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_modelService.ModelExists(model.ModelId))
+                    if (!await _modelService.ModelExistsAsync(model.ModelId)) // Utilisation de la méthode
                     {
                         return NotFound();
                     }
