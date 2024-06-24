@@ -14,20 +14,20 @@
     <table class="table table-hover table-bordered">
         <thead class="thead-dark">
             <tr>
-                <th>@Html.DisplayNameFor(model => model.VIN)</th>
-                <th>@Html.DisplayNameFor(model => model.Year)</th>
+                <th>@Html.DisplayNameFor(model => model.First().VIN)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Year)</th>
                 <th>@Html.DisplayName("Make")</th>
                 <th>@Html.DisplayName("Model")</th>
-                <th>@Html.DisplayNameFor(model => model.Trim)</th>
-                <th>@Html.DisplayNameFor(model => model.PurchaseDate)</th>
-                <th>@Html.DisplayNameFor(model => model.PurchasePrice)</th>
-                <th>@Html.DisplayNameFor(model => model.Description)</th>
-                <th>@Html.DisplayNameFor(model => model.AvailabilityDate)</th>
-                <th>@Html.DisplayNameFor(model => model.SalePrice)</th>
-                <th>@Html.DisplayNameFor(model => model.Status)</th>
-                <th>@Html.DisplayNameFor(model => model.PhotoPath)</th>
-                <th>@Html.DisplayNameFor(model => model.RepairDescriptions)</th>
-                <th>@Html.DisplayNameFor(model => model.TotalRepairCost)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Trim)</th>
+                <th>@Html.DisplayNameFor(model => model.First().PurchaseDate)</th>
+                <th>@Html.DisplayNameFor(model => model.First().PurchasePrice)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Description)</th>
+                <th>@Html.DisplayNameFor(model => model.First().AvailabilityDate)</th>
+                <th>@Html.DisplayNameFor(model => model.First().SalePrice)</th>
+                <th>@Html.DisplayNameFor(model => model.First().CarStatus.Status)</th>
+                <th>@Html.DisplayNameFor(model => model.First().PhotoPath)</th>
+                <th>@Html.DisplayNameFor(model => model.First().CarRepairs.RepairDescriptions)</th>
+                <th>@Html.DisplayNameFor(model => model.First().CarRepairs.TotalRepairCost)</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -46,8 +46,8 @@
                     <td>@item.AvailabilityDate.ToString("yyyy-MM-dd")</td>
                     <td>@(item.SalePrice.HasValue ? item.SalePrice.Value.ToString("N2") + " €" : "N/A")</td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Status)
-                        @if (item.Status == "Vendu")
+                        @Html.DisplayFor(modelItem => item.CarStatus.Status)
+                        @if (item.CarStatus.Status == "Vendu")
                         {
                             <div>le : @(item.SaleDate.HasValue ? item.SaleDate.Value.ToString("yyyy-MM-dd") : "N/A")</div>
                         }
@@ -58,8 +58,8 @@
                             <img src="@item.PhotoPath" alt="Photo" class="img-thumbnail" style="max-width: 100px; max-height: 100px;" />
                         }
                     </td>
-                    <td>@item.RepairDescriptions</td>
-                    <td>@item.TotalRepairCost.ToString("N2") €</td>
+                    <td>@item.CarRepairs.RepairDescriptions</td>
+                    <td>@item.CarRepairs.TotalRepairCost.ToString("N2") €</td>
                     <td class="d-flex flex-column align-items-center">
                         <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-primary btn-sm mb-2">Modifier</a>
                         <form asp-action="Delete" asp-route-id="@item.CarId" method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette voiture ?');">

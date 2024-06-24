@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 
 namespace ExpressVoitures.Models
 {
+    // Classe représentant une voiture
     public class Car
     {
         [Key]
@@ -69,16 +69,46 @@ namespace ExpressVoitures.Models
         [Display(Name = "Date de disponibilité à la vente")]
         public DateTime AvailabilityDate { get; set; }
 
+        [ForeignKey("MakeId")]
+        public Make? Make { get; set; }
+
+        [ForeignKey("ModelId")]
+        public Model? Model { get; set; }
+
+        // Collection de réparations directement incluse dans la classe Car
+        public ICollection<Repair> Repairs { get; set; } = new List<Repair>();
+
+        // Propriété pour gérer l'état de la voiture
+        [NotMapped]
+        public CarStatus CarStatus => new CarStatus(this);
+
+        // Propriété pour gérer les réparations de la voiture
+        [NotMapped]
+        public CarRepairs CarRepairs => new CarRepairs(this);
+    }
+
+    // Classe pour gérer l'état de la voiture
+    public class CarStatus : IStatusOperations
+    {
+        private readonly Car _car;
+
+        // Constructeur prenant un objet Car
+        public CarStatus(Car car)
+        {
+            _car = car;
+        }
+
+        // Propriété calculée pour obtenir et définir le statut de la voiture
         [NotMapped]
         public string Status
         {
             get
             {
-                if (IsAvailable)
+                if (_car.IsAvailable)
                 {
                     return "Disponible";
                 }
-                else if (SaleDate.HasValue)
+                else if (_car.SaleDate.HasValue)
                 {
                     return "Vendu";
                 }
@@ -91,36 +121,58 @@ namespace ExpressVoitures.Models
             {
                 if (value == "Disponible")
                 {
-                    IsAvailable = true;
-                    SaleDate = null;
+                    _car.IsAvailable = true;
+                    _car.SaleDate = null;
                 }
                 else if (value == "Vendu")
                 {
-                    IsAvailable = false;
-                    SaleDate = SaleDate ?? DateTime.Now;
+                    _car.IsAvailable = false;
+                    _car.SaleDate = _car.SaleDate ?? DateTime.Now;
                 }
                 else if (value == "Non Disponible")
                 {
-                    IsAvailable = false;
-                    SaleDate = null;
+                    _car.IsAvailable = false;
+                    _car.SaleDate = null;
                 }
             }
         }
+    }
 
-        [ForeignKey("MakeId")]
-        public Make? Make { get; set; }
+    // Classe pour gérer les réparations de la voiture
+    public class CarRepairs : IRepairOperations
+    {
+        private readonly Car _car;
 
-        [ForeignKey("ModelId")]
-        public Model? Model { get; set; }
+        // Constructeur prenant un objet Car
+        public CarRepairs(Car car)
+        {
+            _car = car;
+        }
 
-        public ICollection<Repair> Repairs { get; } = new List<Repair>();
+        // Collection de réparations
+        public ICollection<Repair> Repairs => _car.Repairs;
 
+        // Propriété calculée pour obtenir la description des réparations
         [NotMapped]
         [Display(Name = "Descriptif des réparations")]
         public string RepairDescriptions => string.Join(", ", Repairs.Select(r => r.RepairDescription));
 
+        // Propriété calculée pour obtenir le coût total des réparations
         [NotMapped]
         [Display(Name = "Coût total des réparations")]
         public decimal TotalRepairCost => Repairs.Sum(r => r.Cost);
+    }
+
+    // Interfaces pour respecter le principe de Ségrégation des Interfaces
+    public interface IStatusOperations
+    {
+        string Status { get; set; }
+    }
+
+    public interface IRepairOperations
+    {
+        ICollection<Repair> Repairs { get; }
+        string RepairDescriptions { get; }
+        decimal TotalRepairCost { get; }
     }
 }

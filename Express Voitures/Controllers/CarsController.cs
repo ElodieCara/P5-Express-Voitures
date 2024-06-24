@@ -1,48 +1,43 @@
-﻿using ExpressVoitures.Data;
-using ExpressVoitures.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using ExpressVoitures.Models;
+using ExpressVoitures.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 [Route("Cars")]
 public class CarsController : Controller
 {
-    private readonly ApplicationDbContext _context;
+    private readonly ICarService _carService;
 
-    public CarsController(ApplicationDbContext context)
+    public CarsController(ICarService carService)
     {
-        _context = context;
+        _carService = carService;
     }
 
     [HttpGet("")]
     public async Task<IActionResult> Index()
     {
-        var cars = await _context.Cars
-            .Include(c => c.Make)
-            .Include(c => c.Model)
-            .Include(c => c.Repairs)
-            .ToListAsync();
+        var cars = await _carService.GetAllCarsAsync();
         return View(cars);
     }
 
     [HttpGet("Catalogue")]
     public async Task<IActionResult> Catalogue()
     {
-        var availableCars = await _context.Cars
-            .Include(c => c.Make)
-            .Include(c => c.Model)
-            .Include(c => c.Repairs)
-            .OrderBy(c => c.PurchaseDate)
-            //.Where(c => c.IsAvailable && !c.SaleDate.HasValue)
-            .ToListAsync();
+        var availableCars = await _carService.GetAllCarsAsync();
+        availableCars = availableCars.OrderBy(c => c.PurchaseDate).ToList();
         return View(availableCars);
     }
 
     private void PopulateDropdowns(Car? car = null)
     {
-        ViewBag.MakeId = new SelectList(_context.Makes, "MakeId", "Name", car?.MakeId);
-        ViewBag.ModelId = new SelectList(_context.Models, "ModelId", "Name", car?.ModelId);
+        ViewBag.MakeId = new SelectList(_carService.GetMakes(), "MakeId", "Name", car?.MakeId);
+        ViewBag.ModelId = new SelectList(_carService.GetModels(), "ModelId", "Name", car?.ModelId);
     }
 
     [Authorize(Policy = "AdminOnly")]
@@ -73,8 +68,7 @@ public class CarsController : Controller
                 car.PhotoPath = "/images/" + fileName;
             }
 
-            _context.Add(car);
-            await _context.SaveChangesAsync();
+            await _carService.AddCarAsync(car);
 
             for (int i = 0; i < RepairsDescriptions.Length; i++)
             {
@@ -84,14 +78,11 @@ public class CarsController : Controller
                     RepairDescription = RepairsDescriptions[i],
                     Cost = RepairsCosts[i]
                 };
-                _context.Repairs.Add(newRepair);
+                await _carService.AddRepairAsync(newRepair);
             }
 
-            await _context.SaveChangesAsync();
-
             car.SalePrice = car.PurchasePrice + RepairsCosts.Sum() + 500;
-            _context.Update(car);
-            await _context.SaveChangesAsync();
+            await _carService.UpdateCarAsync(car);
 
             return RedirectToAction(nameof(Index));
         }
@@ -109,9 +100,7 @@ public class CarsController : Controller
             return NotFound();
         }
 
-        var car = await _context.Cars
-            .Include(c => c.Repairs)
-            .FirstOrDefaultAsync(m => m.CarId == id);
+        var car = await _carService.GetCarByIdAsync(id);
         if (car == null)
         {
             return NotFound();
@@ -165,18 +154,17 @@ public class CarsController : Controller
             else
             {
                 // Conserver le chemin de la photo existante
-                _context.Entry(car).Property(x => x.PhotoPath).IsModified = false;
+                _carService.SetPhotoPathUnmodified(car);
             }
 
             // Mise à jour de la voiture
-            _context.Update(car);
-            await _context.SaveChangesAsync();
+            await _carService.UpdateCarAsync(car);
 
             // Supprimer les réparations existantes pour ajouter les nouvelles
-            var existingRepairs = await _context.Repairs.Where(r => r.CarId == car.CarId).ToListAsync();
+            var existingRepairs = await _carService.GetRepairsByCarIdAsync(car.CarId);
             foreach (var repair in existingRepairs)
             {
-                _context.Repairs.Remove(repair);
+                await _carService.RemoveRepairAsync(repair);
             }
 
             // Ajouter les nouvelles réparations
@@ -188,15 +176,15 @@ public class CarsController : Controller
                     RepairDescription = RepairsDescriptions[i],
                     Cost = RepairsCosts[i]
                 };
-                _context.Repairs.Add(newRepair);
+                await _carService.AddRepairAsync(newRepair);
             }
 
             car.SalePrice = car.PurchasePrice + RepairsCosts.Sum() + 500;
-            await _context.SaveChangesAsync();
+            await _carService.UpdateCarAsync(car);
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!CarExists(car.CarId))
+            if (!_carService.CarExists(car.CarId))
             {
                 return NotFound();
             }
@@ -209,7 +197,6 @@ public class CarsController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-
     [Authorize(Policy = "AdminOnly")]
     [HttpGet("Delete/{id}")]
     public async Task<IActionResult> Delete(int id)
@@ -219,10 +206,7 @@ public class CarsController : Controller
             return NotFound();
         }
 
-        var car = await _context.Cars
-            .Include(c => c.Make)
-            .Include(c => c.Model)
-            .FirstOrDefaultAsync(m => m.CarId == id);
+        var car = await _carService.GetCarByIdAsync(id);
         if (car == null)
         {
             return NotFound();
@@ -236,18 +220,12 @@ public class CarsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var car = await _context.Cars.FindAsync(id);
-        if (car == null)
-        {
-            return NotFound();
-        }
-        _context.Cars.Remove(car);
-        await _context.SaveChangesAsync();
+        await _carService.DeleteCarAsync(id);
         return RedirectToAction(nameof(Index));
     }
 
     private bool CarExists(int id)
     {
-        return _context.Cars.Any(e => e.CarId == id);
+        return _carService.CarExists(id);
     }
 }

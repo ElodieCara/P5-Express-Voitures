@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ExpressVoitures.Data;
 using ExpressVoitures.Models;
+using ExpressVoitures.Services;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
 
@@ -27,6 +28,9 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
 });
 
+// Ajout du service pour la gestion des voitures
+builder.Services.AddScoped<ICarService, CarService>();
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
@@ -44,8 +48,8 @@ CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
     DefaultRequestCulture = new RequestCulture(cultureInfo),
-    SupportedCultures = [cultureInfo],
-    SupportedUICultures = [cultureInfo]
+    SupportedCultures = new List<CultureInfo> { cultureInfo },
+    SupportedUICultures = new List<CultureInfo> { cultureInfo }
 });
 
 if (!app.Environment.IsDevelopment())
