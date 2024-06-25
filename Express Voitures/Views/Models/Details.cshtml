@@ -19,8 +19,11 @@
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Make)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Make.Name)
+        <dd class="col-sm-10">
+            @{
+                var makeName = Model.Make != null ? Model.Make.Name : "No Make";
+            }
+            @makeName
         </dd>
     </dl>
 </div>

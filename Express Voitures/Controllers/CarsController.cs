@@ -51,7 +51,7 @@ public class CarsController : Controller
     [Authorize(Policy = "AdminOnly")]
     [HttpPost("Create")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,IsAvailable,Description,Status,SaleDate")] Car car, IFormFile photo, string[] RepairsDescriptions, decimal[] RepairsCosts)
+    public async Task<IActionResult> Create([Bind("CarId,VIN,Year,MakeId,ModelId,Trim,PurchaseDate,PurchasePrice,AvailabilityDate,IsAvailable,Description,Status,SaleDate")] Car car, IFormFile? photo, string[] RepairsDescriptions, decimal[] RepairsCosts)
     {
         if (ModelState.IsValid)
         {
@@ -90,6 +90,7 @@ public class CarsController : Controller
         await PopulateDropdowns(car);
         return View(car);
     }
+
 
     [Authorize(Policy = "AdminOnly")]
     [HttpGet("Edit/{id}")]

@@ -27,9 +27,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Make.Name)
-            </td>
+                <td>
+                    @{
+                        var makeName = item.Make != null ? item.Make.Name : "No Make";
+                    }
+                    @makeName
+                </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ModelId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.ModelId">Details</a> |
