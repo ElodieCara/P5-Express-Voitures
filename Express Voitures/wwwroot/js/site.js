@@ -23,24 +23,11 @@
             var cost = document.getElementById('new-repair-cost').value;
 
             if (description && cost) {
-                // Créer un nouvel élément de liste pour la réparation
-                var repairItem = document.createElement('li');
-                repairItem.className = 'list-group-item';
-                repairItem.innerHTML = `${description}: ${cost} €`;
+                var repairItem = document.createElement('tr');
+                repairItem.innerHTML = `<td>${description}<input type="hidden" name="RepairsDescriptions" value="${description}" /></td>
+                                        <td>${cost} €<input type="hidden" name="RepairsCosts" value="${cost}" /></td>
+                                        <td><button type="button" class="btn btn-danger btn-sm remove-repair">Supprimer</button></td>`;
                 document.getElementById('repairs-list').appendChild(repairItem);
-
-                // Créer des champs cachés pour les descriptions et les coûts des réparations
-                var hiddenDescription = document.createElement('input');
-                hiddenDescription.type = 'hidden';
-                hiddenDescription.name = 'RepairsDescriptions';
-                hiddenDescription.value = description;
-                document.getElementById('repairs-list').appendChild(hiddenDescription);
-
-                var hiddenCost = document.createElement('input');
-                hiddenCost.type = 'hidden';
-                hiddenCost.name = 'RepairsCosts';
-                hiddenCost.value = cost;
-                document.getElementById('repairs-list').appendChild(hiddenCost);
 
                 // Réinitialiser les champs de saisie
                 document.getElementById('new-repair-description').value = '';
@@ -52,7 +39,7 @@
     // Ajouter un événement de clic pour supprimer une réparation
     document.addEventListener('click', function (e) {
         if (e.target && e.target.classList.contains('remove-repair')) {
-            e.target.closest('li').remove();
+            e.target.closest('tr').remove();
         }
     });
 
@@ -75,13 +62,19 @@
     // Ajouter un champ caché pour le statut de la voiture lors de la soumission du formulaire d'édition
     if (document.getElementById('editForm')) {
         document.getElementById('editForm').addEventListener('submit', function () {
-            var statusElement = document.querySelector('[name="Status"]');
-            var statusValue = statusElement.value;
+            var statusElement = document.getElementById('statusSelect');
             var hiddenStatusInput = document.createElement('input');
             hiddenStatusInput.type = 'hidden';
-            hiddenStatusInput.name = 'Status';
-            hiddenStatusInput.value = statusValue;
+            hiddenStatusInput.name = 'CarStatus.Status';
+            hiddenStatusInput.value = statusElement.value;
             this.appendChild(hiddenStatusInput);
+
+            if (statusElement.value !== 'Vendu') {
+                var saleDateInput = document.querySelector('[name="SaleDate"]');
+                if (saleDateInput) {
+                    saleDateInput.value = '';
+                }
+            }
         });
     }
 

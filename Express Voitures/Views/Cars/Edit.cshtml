@@ -135,7 +135,6 @@
                     <label asp-for="CarStatus.Status" class="control-label">Statut</label>
                     <select asp-for="CarStatus.Status" class="form-control" id="statusSelect">
                         <option value="Disponible">Disponible</option>
-                        <option value="Non Disponible">Non Disponible</option>
                         <option value="Vendu">Vendu</option>
                     </select>
                 </div>
@@ -159,80 +158,5 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    <script>
-        function toggleSaleDate() {
-            var statusSelect = document.getElementById('statusSelect');
-            var saleDateGroup = document.getElementById('saleDateGroup');
-            if (statusSelect.value === 'Vendu') {
-                saleDateGroup.style.display = 'block';
-            } else {
-                saleDateGroup.style.display = 'none';
-            }
-        }
-
-        document.getElementById('statusSelect').addEventListener('change', toggleSaleDate);
-
-        // Initialize the visibility on page load
-        toggleSaleDate();
-
-        document.getElementById('photoInput').addEventListener('change', function (e) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var preview = document.getElementById('newPhotoPreview');
-                preview.src = e.target.result;
-                preview.style.display = 'block';
-            }
-            reader.readAsDataURL(this.files[0]);
-
-            var fileNameSpan = document.getElementById('fileName');
-            fileNameSpan.textContent = this.files[0].name;
-        });
-
-        document.getElementById('add-repair').addEventListener('click', function () {
-            var description = document.getElementById('new-repair-description').value;
-            var cost = document.getElementById('new-repair-cost').value;
-
-            if (description && cost) {
-                var repairsList = document.getElementById('repairs-list');
-
-                var tr = document.createElement('tr');
-                tr.innerHTML = '<td>' + description + '<input type="hidden" name="RepairsDescriptions" value="' + description + '" /></td>' +
-                    '<td>' + cost + ' €<input type="hidden" name="RepairsCosts" value="' + cost + '" /></td>' +
-                    '<td><button type="button" class="btn btn-danger btn-sm remove-repair">Supprimer</button></td>';
-
-                repairsList.appendChild(tr);
-
-                document.getElementById('new-repair-description').value = '';
-                document.getElementById('new-repair-cost').value = '';
-            }
-        });
-
-        document.addEventListener('click', function (e) {
-            if (e.target && e.target.classList.contains('remove-repair')) {
-                e.target.closest('tr').remove();
-            }
-        });
-
-        document.getElementById('editForm').addEventListener('submit', function () {
-            var statusElement = document.querySelector('[name="Status"]');
-            var statusValue = statusElement.value;
-            var hiddenStatusInput = document.createElement('input');
-            hiddenStatusInput.type = 'hidden';
-            hiddenStatusInput.name = 'Status';
-            hiddenStatusInput.value = statusValue;
-            this.appendChild(hiddenStatusInput);
-        });
-    </script>
+    <script src="~/js/site.js"></script>
 }
-
-<style>
-    .btn-custom {
-        background-color: #9282F5;
-        color: white;
-        border: none;
-    }
-
-        .btn-custom:hover {
-            background-color: #7a6fde;
-        }
-</style>

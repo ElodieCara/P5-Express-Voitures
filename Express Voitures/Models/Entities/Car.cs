@@ -114,7 +114,8 @@ namespace ExpressVoitures.Models
                 }
                 else
                 {
-                    return "Non Disponible";
+                    // Si _car.IsAvailable est false et SaleDate n'a pas de valeur, alors nous retournons "Non Disponible".
+                    return "Disponible";
                 }
             }
             set
@@ -129,12 +130,13 @@ namespace ExpressVoitures.Models
                     _car.IsAvailable = false;
                     _car.SaleDate = _car.SaleDate ?? DateTime.Now;
                 }
-                else if (value == "Non Disponible")
+                else
                 {
                     _car.IsAvailable = false;
                     _car.SaleDate = null;
                 }
             }
+
         }
     }
 
