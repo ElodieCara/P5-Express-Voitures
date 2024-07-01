@@ -62,8 +62,6 @@ Cette application est construite avec ASP.NET Core et utilise une base de donné
 - [Configuration](#configuration)
 - [Utilisation](#utilisation)
 - [Déploiement sur Azure](#déploiement-sur-azure)
-- [Contribuer](#contribuer)
-- [Licence](#licence)
 
 ## Prérequis
 
@@ -78,7 +76,7 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 1. Clonez le dépôt :
 
    ```bash
-   git clone https://github.com/votre-utilisateur/express-voitures.git
+   git clone https://github.com/ElodieCara/P5-Express-Voitures.git
    cd express-voitures
    ```
 
@@ -92,10 +90,12 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 
 4. Mettez à jour la chaîne de connexion dans `appsettings.json` avec vos informations SQL Server :
 
-   ```json
-   "ConnectionStrings": {
-       "DefaultConnection": "Server=VOTRE_SERVEUR;Database=ExpressVoitures;Trusted_Connection=True;MultipleActiveResultSets=true;"
-   }
+   ```json  
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=ExpressVoitures;Trusted_Connection=True;MultipleActiveResultSets=true;"
+  }
+}
+
    ```
 
 ## Configuration
@@ -122,10 +122,4 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 
 2. Suivez [ce guide](https://learn.microsoft.com/fr-fr/aspnet/core/tutorials/publish-to-azure-webapp-using-vs) pour déployer l'application sur Azure App Service.
 
-## Contribuer
 
-Les contributions sont les bienvenues ! Veuillez soumettre une pull request pour toutes les améliorations, corrections de bogues ou nouvelles fonctionnalités.
-
-## Licence
-
-Ce projet est sous licence MIT. Pour plus d'informations, veuillez consulter le fichier LICENSE.
