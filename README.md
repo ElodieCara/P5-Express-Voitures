@@ -92,7 +92,7 @@ Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur 
 
    ```json  
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=ExpressVoitures;Trusted_Connection=True;MultipleActiveResultSets=true;"
+    "DefaultConnection": "Server=YOUR_SQL_SERVER;Database=ExpressVoitures;Trusted_Connection=True;MultipleActiveResultSets=true;persist security info=True;Integrated Security=SSPI;TrustServerCertificate=True;"
   }
 }
 
