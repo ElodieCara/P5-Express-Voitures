@@ -17,12 +17,12 @@ namespace ExpressVoitures.Repositories
 
         public async Task<List<Model>> GetAllAsync()
         {
-            return await _context.Models.ToListAsync();
+            return await _context.Models.Include(m => m.Make).ToListAsync();
         }
 
         public async Task<Model?> GetByIdAsync(int id)
         {
-            return await _context.Models.FindAsync(id);
+            return await _context.Models.Include(m => m.Make).FirstOrDefaultAsync(m => m.ModelId == id);
         }
 
         public async Task AddAsync(Model model)

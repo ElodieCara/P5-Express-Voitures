@@ -8,7 +8,7 @@ namespace ExpressVoitures.Services
     public class CarService : ICarService
     {
         private readonly ICarRepository _carRepository;
-        private readonly IRepairRepository _repairRepository; // Ajout du repository des réparations
+        private readonly IRepairRepository _repairRepository; 
 
         public CarService(ICarRepository carRepository, IRepairRepository repairRepository)
         {
@@ -50,7 +50,7 @@ namespace ExpressVoitures.Services
             return await _carRepository.CarExistsAsync(id);
         }
 
-        public async Task AddRepairAsync(int carId, Repair repair) // Implémentation de la méthode
+        public async Task AddRepairAsync(int carId, Repair repair) 
         {
             var car = await _carRepository.GetByIdAsync(carId);
             if (car != null)

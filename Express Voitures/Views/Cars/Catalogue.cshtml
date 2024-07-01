@@ -16,10 +16,10 @@
                     {
                         <div class="badge badge-sold">Vendu</div>
                     }
-                    else if (!car.IsAvailable && !car.SaleDate.HasValue)
+                    @* else if (!car.IsAvailable && !car.SaleDate.HasValue)
                     {
                         <div class="badge badge-unavailable">Non disponible</div>
-                    }
+                    } *@
 
                     <div class="card-body">
                         <h5 class="card-title">@car.Make?.Name</h5>

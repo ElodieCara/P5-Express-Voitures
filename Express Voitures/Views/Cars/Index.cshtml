@@ -7,7 +7,7 @@
 <h1>Gestion des voitures</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-success mb-3">Ajouter une nouvelle voiture</a>
+    <a asp-action="Create" class="btn btn-custom mb-3">Ajouter une nouvelle voiture</a>
 </p>
 
 <div class="table-responsive">
@@ -61,9 +61,9 @@
                     <td>@item.CarRepairs.RepairDescriptions</td>
                     <td>@item.CarRepairs.TotalRepairCost.ToString("N2") €</td>
                     <td class="d-flex flex-column align-items-center">
-                        <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-primary btn-sm mb-2">Modifier</a>
+                        <a asp-action="Edit" asp-route-id="@item.CarId" class="btn btn-custom btn-sm mb-2">Modifier</a>
                         <form asp-action="Delete" asp-route-id="@item.CarId" method="post" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette voiture ?');">
-                            <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+                            <button type="submit" class="btn btn-custom btn-sm">Supprimer</button>
                         </form>
                     </td>
                 </tr>
